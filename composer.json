@@ -1,5 +1,5 @@
 {
-    "name": "haeflimi/concretecms-team_manager",
+    "name": "haeflimi/team_manager",
     "type": "concrete5-package",
     "require": {
         "php": ">=8",
