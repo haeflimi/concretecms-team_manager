@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<schema version="0.3">
+    <table name="btTeamManagerDirectory">
+        <field name="bID" type="I">
+            <key/>
+            <unsigned/>
+        </field>
+        <field name="itemsPerPage" type="I">
+            <unsigned/>
+            <default value="20"/>
+        </field>
+        <field name="myTeamsPageID" type="I">
+            <unsigned/>
+            <default value="0"/>
+        </field>
+        <field name="joinPoolID" type="I">
+            <unsigned/>
+            <default value="0"/>
+        </field>
+        <field name="onlyListJoinPool" type="I1">
+            <unsigned/>
+            <default value="0"/>
+        </field>
+    </table>
+</schema>

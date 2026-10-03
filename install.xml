@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <concrete5-cif version="1.0">
     <blocktypes>
-        <blocktype handle="team_manager" package="team_manager"/>
+        <blocktype handle="my_teams" package="team_manager"/>
+        <blocktype handle="team_directory" package="team_manager"/>
     </blocktypes>
     <blocktypesets>
         <blocktypeset handle="social">
-            <blocktype handle="team_manager"/>
+            <blocktype handle="my_teams"/>
+            <blocktype handle="team_directory"/>
         </blocktypeset>
     </blocktypesets>
 </concrete5-cif>

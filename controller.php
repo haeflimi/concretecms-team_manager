@@ -1,19 +1,30 @@
 <?php
 namespace Concrete\Package\TeamManager;
 
-use Concrete\Core\View\View;
-use Concrete\Core\Package\Package;
 use Concrete\Core\Backup\ContentImporter;
-use Concrete\Core\User\Group\Group;
-use Core;
-use Concrete\Core\Support\Facade\Config;
-use Concrete\Core\Support\Facade\Events;
+use Concrete\Core\Block\BlockType\BlockType;
+use Concrete\Core\Database\Connection\Connection;
+use Concrete\Core\Database\EntityManager\Provider\ProviderAggregateInterface;
+use Concrete\Core\Database\EntityManager\Provider\StandardPackageProvider;
+use Concrete\Core\Package\Package;
+use Concrete\Core\Page\Page;
+use Concrete\Core\Page\Single as SinglePage;
+use TeamManager\Install\TeamInstaller;
+use TeamManager\Listener\GroupListener;
+use TeamManager\Team\TeamConfig;
+use TeamManager\Team\TeamPoolRepository;
+use TeamManager\Team\TeamRepository;
+use TeamManager\Team\TeamRequestRepository;
 
-class Controller extends Package
+class Controller extends Package implements ProviderAggregateInterface
 {
     protected $pkgHandle = 'team_manager';
-    protected $appVersionRequired = '8.4';
-    protected $pkgVersion = '0.91';
+    protected $appVersionRequired = '9.4';
+    protected $phpVersionRequired = '8.0';
+    protected $pkgVersion = '3.1.0';
+    protected $pkgAutoloaderRegistries = [
+        'src' => '\TeamManager',
+    ];
 
     public function getPackageName()
     {
@@ -22,57 +33,87 @@ class Controller extends Package
 
     public function getPackageDescription()
     {
-        return t('Concrete5 Block that allows Users to create and manage teams (using Groups) and invite other Users.');
+        return t('Teams with captains, invitations and join requests, organized in team pools (core groups usable for permissions).');
+    }
+
+    public function getEntityManagerProvider()
+    {
+        return new StandardPackageProvider($this->app, $this, [
+            'src/Entity' => 'TeamManager\Entity',
+        ]);
     }
 
     public function on_start()
     {
-        // we need this Asset in order to be able to use Pnotify.
-        // @todo mabe in the future there will be a sepparate asset for the notification system!? A lot overhead like this.
-        $view = new View();
-        $view->requireAsset('core/app');
+        // shared instances within a request
+        foreach ([TeamConfig::class, TeamRepository::class, TeamPoolRepository::class, TeamRequestRepository::class] as $class) {
+            $this->app->singleton($class);
+        }
 
-        // When there is a Invite Notification for the User, we want to show it until aknowledged/ responded
-        /*$view->addFooterItem(
-            Core::make('helper/concrete/ui')->notify(
-                array(
-                    // type
-                    // - info: blue background and light blue text
-                    // - success: green background and white text
-                    // - error: red background and white text
-                    'type' => 'info',
-                    // icon
-                    // - display Font Awesome icon
-                    'icon' => 'fa fa-internet-explorer',
-                    // title
-                    // - h4 title text
-                    'title' => t('Old Browser Alert'),
-                )));*/
-
-
-        //@todo catch the event when user leave groups so we can check if the group is one that's managed by the team manager and delete it if the last user leaves
+        // keep team data consistent when pool groups or users are removed outside of the team manager
+        $director = $this->app->make('director');
+        $listeners = [
+            'on_group_delete' => 'onGroupDelete',
+            'on_user_delete' => 'onUserDelete',
+        ];
+        foreach ($listeners as $event => $method) {
+            $director->addListener($event, function ($e) use ($method) {
+                $this->app->make(GroupListener::class)->$method($e);
+            });
+        }
     }
 
     public function install()
     {
         $pkg = parent::install();
-        $gName = $this->getPackageName();
-        // Create Parent Group for creating Teams under
-        $group = Group::getByName($gName);
-        if(empty($group)){
-            $group = Group::add($gName, t('Default Group for Team Manager Blocks'), $pkg);
-        }
+        $this->installContent();
 
-        $ci = new ContentImporter();
-        $ci->importContentFile($pkg->getPackagePath() . '/install.xml');
+        return $pkg;
     }
 
     public function upgrade()
     {
+        $installed = $this->getPackageEntity()->getPackageVersion();
+        if (version_compare($installed, '3.0.0', '<')) {
+            // 3.0 moved teams from core groups to own tables, the old team tables are not converted.
+            // Drop them before the schema update, their rows would break the new foreign keys.
+            $db = $this->app->make(Connection::class);
+            foreach (['tmTeamRequest', 'tmTeamPoolUser', 'tmTeamPool', 'tmTeamProfile'] as $table) {
+                $db->executeStatement('DROP TABLE IF EXISTS ' . $table);
+            }
+        }
+
         parent::upgrade();
+        // the legacy "team_manager" block type is kept on purpose: application/blocks/team_manager overrides it
+        // with the TFTS team UI, deleting it would remove those blocks from all pages.
+        $this->installContent();
     }
 
-    public function uninstall(){
+    public function uninstall()
+    {
+        $this->app->make(TeamInstaller::class)->uninstall();
         parent::uninstall();
+    }
+
+    private function installContent()
+    {
+        $this->app->make(TeamInstaller::class)->install();
+
+        $ci = new ContentImporter();
+        $ci->importContentFile($this->getPackagePath() . '/install.xml');
+
+        // the importer skips existing block types, refresh them so new db.xml columns are created
+        foreach (['my_teams', 'team_directory'] as $handle) {
+            $blockType = BlockType::getByHandle($handle);
+            if ($blockType) {
+                $blockType->refresh();
+            }
+        }
+
+        $page = Page::getByPath('/dashboard/users/teams');
+        if (!$page || $page->isError()) {
+            $page = SinglePage::add('/dashboard/users/teams', $this->getPackageEntity());
+            $page->update(['cName' => t('Teams'), 'cDescription' => t('Manage teams and their members.')]);
+        }
     }
 }

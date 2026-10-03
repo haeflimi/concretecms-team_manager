@@ -1,0 +1,13 @@
+.team-manager .team-manager-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.team-manager .team-manager-logo-lg {
+    width: 80px;
+    height: 80px;
+}
+.team-manager .tm-gap {
+    gap: .5rem;
+}
