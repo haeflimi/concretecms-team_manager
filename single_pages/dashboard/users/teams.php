@@ -705,9 +705,6 @@ $button = function (string $task, array $fields, string $label, string $class, ?
             chip.title = single.note || '';
             chip.appendChild(el('i', 'fas fa-user me-1'));
             chip.appendChild(document.createTextNode(single.name));
-            if (single.note) {
-                chip.appendChild(el('span', 'text-muted ms-1 fw-normal', '– ' + single.note));
-            }
             chip.appendChild(iconButton('fa-times', i18n.removeSingle, 'text-danger', function () {
                 if (confirm(i18n.confirmRemoveSingle.replace('%s', single.name))) {
                     post(board.dataset.removeSingleUrl, {single: single.id}, []);
