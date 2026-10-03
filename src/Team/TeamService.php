@@ -560,22 +560,10 @@ class TeamService
     }
 
     /**
-     * Pools the user can create a new team in right now.
-     *
-     * @return TeamPool[] sorted by name
-     */
-    public function getPoolsForTeamCreation(UserInfo $user): array
-    {
-        return array_values(array_filter($this->pools->getAll(true), function (TeamPool $pool) use ($user) {
-            return $this->getTeamCreationBlockedReason($pool, $user) === null;
-        }));
-    }
-
-    /**
      * Why the user can't create a team in the pool, null if they can. The creator joins as captain,
      * so they must not be in another team of the pool yet.
      */
-    protected function getTeamCreationBlockedReason(TeamPool $pool, UserInfo $user): ?string
+    public function getTeamCreationBlockedReason(TeamPool $pool, UserInfo $user): ?string
     {
         if (!$pool->isOpen() || !$pool->allowsTeamCreation()) {
             return t('New teams can\'t be created in %s.', $pool->getName());

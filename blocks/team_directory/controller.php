@@ -117,6 +117,8 @@ class Controller extends AbstractTeamBlockController
             $this->set('mySingle', $me ? $pools->findSingle($pool, (int) $me->getUserID()) : null);
             $myPoolTeam = $me ? $pools->getTeamOfUser($pool, (int) $me->getUserID()) : null;
             $this->set('myPoolTeamID', $myPoolTeam ? $myPoolTeam->getID() : null);
+            // the pool settings decide whether users can create teams in it
+            $this->set('canCreateTeam', $me && $this->canJoinIn($pool) && $service->getTeamCreationBlockedReason($pool, $me) === null);
 
             return;
         }
@@ -182,6 +184,25 @@ class Controller extends AbstractTeamBlockController
             }
 
             return t('You are no longer listed in %s.', $pool->getName());
+        }, $this->getReturnQuery());
+    }
+
+    public function action_create_team($bID = null)
+    {
+        return $this->handle('team_create', function (UserInfo $me, TeamService $service) {
+            $pool = $this->postedPool();
+            $this->assertCanJoinIn($pool);
+            // the pool settings (open, allow team creation, max. teams) are checked by the service
+            $team = $service->create(
+                (string) $this->request->request->get('name'),
+                (string) $this->request->request->get('tag'),
+                (string) $this->request->request->get('description'),
+                $me,
+                true,
+                $pool
+            );
+
+            return t('Team %s has been created in %s. You are its captain.', $team->getName(), $pool->getName());
         }, $this->getReturnQuery());
     }
 

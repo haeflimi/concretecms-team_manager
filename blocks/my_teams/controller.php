@@ -23,7 +23,7 @@ class Controller extends AbstractTeamBlockController
 
     public function getBlockTypeDescription()
     {
-        return t('Lets users create and manage their teams, invite members and answer invitations.');
+        return t('Lets users manage their teams, invite members and answer invitations.');
     }
 
     public function view()
@@ -59,25 +59,6 @@ class Controller extends AbstractTeamBlockController
         $this->set('openInvites', $openInvites);
         $this->set('userInfoRepository', $this->app->make(\Concrete\Core\User\UserInfoRepository::class));
         $this->set('mySingles', $me ? $this->app->make(TeamPoolRepository::class)->getSinglesOfUser((int) $me->getUserID()) : []);
-        // the pool settings decide where users can create teams
-        $this->set('creationPools', $me ? $this->app->make(TeamService::class)->getPoolsForTeamCreation($me) : []);
-    }
-
-    public function action_create_team($bID = null)
-    {
-        return $this->handle('team_create', function (UserInfo $me, TeamService $service) {
-            // the pool settings (open, allow team creation, max. teams) are checked by the service
-            $team = $service->create(
-                (string) $this->request->request->get('name'),
-                (string) $this->request->request->get('tag'),
-                (string) $this->request->request->get('description'),
-                $me,
-                true,
-                $this->app->make(TeamPoolRepository::class)->getByID((int) $this->request->request->get('pool'))
-            );
-
-            return t('Team %s has been created. You are its captain.', $team->getName());
-        });
     }
 
     public function action_update_team($bID = null)

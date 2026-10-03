@@ -12,7 +12,6 @@ defined('C5_EXECUTE') or die('Access Denied.');
  * @var \TeamManager\Entity\TeamRequest[][] $openJoinRequests by team ID, only for teams I captain
  * @var \TeamManager\Entity\TeamRequest[][] $openInvites by team ID, only for teams I captain
  * @var array $flashMessages
- * @var \TeamManager\Entity\TeamPool[] $creationPools pools I can create a new team in
  * @var \TeamManager\Entity\TeamPoolUser[] $mySingles pools I'm listed in as single player
  * @var int $bID
  */
@@ -234,37 +233,6 @@ $userName = function (int $uID) use ($userInfoRepository) {
                 </details>
             <?php } ?>
         </section>
-
-        <?php if ($creationPools) { ?>
-            <section class="team-manager-create">
-                <h4><?= t('Create a Team') ?></h4>
-                <form method="post" action="<?= h($view->action('create_team')) ?>">
-                    <?php $token->output('team_create') ?>
-                    <div class="form-row row g-2 mb-2">
-                        <div class="col-sm-8">
-                            <input type="text" name="name" class="form-control" required maxlength="64" placeholder="<?= t('Team name') ?>">
-                        </div>
-                        <div class="col-sm-4">
-                            <input type="text" name="tag" class="form-control" maxlength="16" placeholder="<?= t('Tag (optional)') ?>">
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <select name="pool" class="form-select form-control" required aria-label="<?= t('Team Pool') ?>">
-                            <?php if (count($creationPools) > 1) { ?>
-                                <option value=""><?= t('Choose a team pool') ?></option>
-                            <?php } ?>
-                            <?php foreach ($creationPools as $creationPool) { ?>
-                                <option value="<?= $creationPool->getID() ?>"><?= h($creationPool->getName()) ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <textarea name="description" class="form-control" rows="2" placeholder="<?= t('Description (optional)') ?>"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?= t('Create Team') ?></button>
-                </form>
-            </section>
-        <?php } ?>
 
         <datalist id="team-manager-users-<?= $bID ?>"></datalist>
     <?php } ?>

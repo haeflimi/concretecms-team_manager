@@ -29,6 +29,7 @@ use TeamManager\Entity\Team;
  * @var int $poolTeamCount
  * @var \TeamManager\Entity\TeamPoolUser|null $mySingle
  * @var int|null $myPoolTeamID
+ * @var bool $canCreateTeam the pool lets me create a new team in it
  */
 
 $userInfoRepository = app(\Concrete\Core\User\UserInfoRepository::class);
@@ -196,6 +197,26 @@ $teamItem = function (Team $item, bool $showPool) use ($logoURL, $pageURL, $join
                         </div>
                         </form>
                     <?php } ?>
+                <?php } ?>
+
+                <?php if ($canCreateTeam) { ?>
+                    <details class="team-manager-create mb-2">
+                        <summary class="btn btn-outline-primary"><i class="fa fa-plus-circle"></i> <?= t('Create a new team') ?></summary>
+                        <?php $formStart('create_team', 'team_create', ['pool' => $pool->getID()], 'mt-2'); ?>
+                            <div class="form-row row g-2 mb-2">
+                                <div class="col-sm-8">
+                                    <input type="text" name="name" class="form-control" required maxlength="64" placeholder="<?= t('Team name') ?>" aria-label="<?= t('Team name') ?>">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="tag" class="form-control" maxlength="16" placeholder="<?= t('Tag (optional)') ?>" aria-label="<?= t('Tag') ?>">
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <textarea name="description" class="form-control" rows="2" placeholder="<?= t('Description (optional)') ?>" aria-label="<?= t('Description') ?>"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?= t('Create Team') ?></button>
+                        </form>
+                    </details>
                 <?php } ?>
 
                 <?php if ($pool->allowsTeams() && $registrable && ($pool->getMaxTeams() === 0 || $poolTeamCount < $pool->getMaxTeams())) {

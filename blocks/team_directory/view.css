@@ -11,3 +11,9 @@
 .team-manager .tm-gap {
     gap: .5rem;
 }
+.team-manager .team-manager-create > summary {
+    list-style: none;
+}
+.team-manager .team-manager-create > summary::-webkit-details-marker {
+    display: none;
+}
