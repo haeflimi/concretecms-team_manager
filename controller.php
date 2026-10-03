@@ -2,6 +2,7 @@
 namespace Concrete\Package\TeamManager;
 
 use Concrete\Core\Backup\ContentImporter;
+use Concrete\Core\Block\BlockController;
 use Concrete\Core\Block\BlockType\BlockType;
 use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Database\EntityManager\Provider\ProviderAggregateInterface;
@@ -21,7 +22,7 @@ class Controller extends Package implements ProviderAggregateInterface
     protected $pkgHandle = 'team_manager';
     protected $appVersionRequired = '9.4';
     protected $phpVersionRequired = '8.0';
-    protected $pkgVersion = '3.1.0';
+    protected $pkgVersion = '3.2.0';
     protected $pkgAutoloaderRegistries = [
         'src' => '\TeamManager',
     ];
@@ -83,10 +84,42 @@ class Controller extends Package implements ProviderAggregateInterface
             }
         }
 
+        $this->removeLegacyBlockType();
+
         parent::upgrade();
-        // the legacy "team_manager" block type is kept on purpose: application/blocks/team_manager overrides it
-        // with the TFTS team UI, deleting it would remove those blocks from all pages.
         $this->installContent();
+    }
+
+    /**
+     * 3.2 removed the unused legacy "team_manager" block type, delete it together with all remaining instances.
+     */
+    private function removeLegacyBlockType()
+    {
+        $blockType = BlockType::getByHandle('team_manager');
+        if ($blockType) {
+            // the block's controller is gone, core needs a controller class to delete instances:
+            // stand in the plain block controller, btTeamManager is dropped below anyway
+            $class = 'Concrete\Package\TeamManager\Block\TeamManager\Controller';
+            if (!class_exists($class)) {
+                class_alias(BlockController::class, $class);
+            }
+
+            // removes the instances on all page versions, stacks and scrapbook aliases, then the type itself
+            $btID = (int) $blockType->getBlockTypeID();
+            $blockType->delete();
+
+            // sweep instances core does not reach (not placed on any page, e.g. in a pile)
+            $db = $this->app->make(Connection::class);
+            $bIDs = $db->fetchFirstColumn('SELECT bID FROM Blocks WHERE btID = ?', [$btID]);
+            foreach ($bIDs as $bID) {
+                foreach (['CollectionVersionBlocks', 'BlockPermissionAssignments', 'CollectionVersionBlockStyles', 'CollectionVersionBlocksCacheSettings', 'Blocks'] as $table) {
+                    $db->executeStatement('DELETE FROM ' . $table . ' WHERE bID = ?', [$bID]);
+                }
+                $db->executeStatement("DELETE FROM PileContents WHERE itemType = 'BLOCK' AND itemID = ?", [$bID]);
+            }
+        }
+
+        $this->app->make(Connection::class)->executeStatement('DROP TABLE IF EXISTS btTeamManager');
     }
 
     public function uninstall()

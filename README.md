@@ -104,4 +104,3 @@ group type is renamed to *Team Pool*, its Captain / Member roles are replaced by
 "Teams" group folder becomes "Team Pools". Groups created as teams by 2.x keep the (renamed) type but are not
 pools, delete them in Dashboard › Groups.
 
-The old `team_manager` block type is kept because `application/blocks/team_manager` overrides it with the TFTS team UI.
