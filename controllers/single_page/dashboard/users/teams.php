@@ -45,7 +45,47 @@ class Teams extends DashboardPageController
             'pool' => (string) $this->request->query->get('pool'),
         ]));
         $this->set('stats', $this->getStats());
+        $this->setListSingles($keywords);
         $this->setCommon();
+    }
+
+    /**
+     * Players looking for a team, filtered like the team list (pool filter, keywords on username and note),
+     * with the teams of their pools to add them to.
+     */
+    protected function setListSingles(string $keywords): void
+    {
+        $filter = $this->getPoolFilter();
+        $pools = $this->poolRepository();
+        if ($filter === false) {
+            // teams without pool, single players are always in a pool
+            $singles = [];
+        } else {
+            $singles = $filter instanceof TeamPool ? $pools->getSingles($filter) : $pools->getAllSingles();
+        }
+
+        $userInfos = $this->app->make(UserInfoRepository::class);
+        $entries = [];
+        $poolTeams = [];
+        foreach ($singles as $single) {
+            $ui = $userInfos->getByID($single->getUserID());
+            $name = $ui ? $ui->getUserName() : t('Deleted user');
+            if ($keywords !== '' && mb_stripos($name, $keywords) === false && mb_stripos($single->getNote(), $keywords) === false) {
+                continue;
+            }
+            $entries[] = ['single' => $single, 'name' => $name];
+            $poolID = $single->getPool()->getID();
+            if (!isset($poolTeams[$poolID])) {
+                $poolTeams[$poolID] = $this->teams()->findAll($single->getPool());
+            }
+        }
+        usort($entries, function (array $a, array $b) {
+            return strcasecmp($a['single']->getPool()->getName(), $b['single']->getPool()->getName()) ?: strcasecmp($a['name'], $b['name']);
+        });
+
+        $this->set('listSingles', $entries);
+        $this->set('listSinglesShown', $filter !== false);
+        $this->set('singlePoolTeams', $poolTeams);
     }
 
     /**

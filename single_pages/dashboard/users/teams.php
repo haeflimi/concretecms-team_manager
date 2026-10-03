@@ -23,6 +23,9 @@ use Concrete\Core\Support\Facade\Url;
  * @var array $boardData
  * @var \TeamManager\Entity\TeamPool|null $boardPool
  * @var array $boardSingles
+ * @var array $listSingles list of ['single' => TeamPoolUser, 'name' => string], list view
+ * @var bool $listSinglesShown false when filtered to teams without pool
+ * @var Team[][] $singlePoolTeams teams by pool ID, to add single players to
  * team / add:
  * @var array $poolOptions
  * @var int $selectedPoolID
@@ -147,7 +150,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
     <form method="get" action="<?= h($url()) ?>" class="d-flex gap-2 mb-3">
         <?php $poolFilterSelect() ?>
         <div class="input-group">
-            <input type="search" name="keywords" class="form-control" value="<?= h($keywords) ?>" placeholder="<?= t('Search teams') ?>" aria-label="<?= t('Search teams') ?>">
+            <input type="search" name="keywords" class="form-control" value="<?= h($keywords) ?>" placeholder="<?= t('Search teams and players') ?>" aria-label="<?= t('Search teams and players') ?>">
             <button type="submit" class="btn btn-secondary"><i class="fas fa-search"></i></button>
         </div>
     </form>
@@ -189,6 +192,60 @@ $button = function (string $task, array $fields, string $label, string $class, ?
             </tbody>
         </table>
         <?= $pagination ?>
+    <?php } ?>
+
+    <?php if ($listSinglesShown) { ?>
+        <h4 class="mt-4"><?= t('Looking for a team (%s)', count($listSingles)) ?></h4>
+        <?php if (!$listSingles) { ?>
+            <p class="text-muted"><?= $keywords !== '' ? t('No players match your search.') : t('Nobody is looking for a team.') ?></p>
+        <?php } else { ?>
+            <table class="table table-striped align-middle">
+                <thead>
+                <tr>
+                    <th><?= t('Player') ?></th>
+                    <th><?= t('Pool') ?></th>
+                    <th><?= t('Since') ?></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($listSingles as $entry) {
+                    /** @var \TeamManager\Entity\TeamPoolUser $single */
+                    $single = $entry['single'];
+                    $singlePool = $single->getPool();
+                    $assignTeams = $singlePoolTeams[$singlePool->getID()] ?? [];
+                    ?>
+                    <tr>
+                        <td>
+                            <?= h($entry['name']) ?>
+                            <?php if ($single->getNote()) { ?>
+                                <div class="small text-muted"><?= h($single->getNote()) ?></div>
+                            <?php } ?>
+                        </td>
+                        <td><a href="<?= h($url('pool', $singlePool->getID())) ?>"><?= h($singlePool->getName()) ?></a></td>
+                        <td class="small text-muted"><?= $dh->formatDate($single->getJoinedAt()) ?></td>
+                        <td class="text-end text-nowrap">
+                            <?php if ($assignTeams) { ?>
+                                <form method="post" action="<?= h($url('assign_single')) ?>" class="d-inline-flex">
+                                    <?php $token->output($tokenAction) ?>
+                                    <input type="hidden" name="return" value="<?= h($currentPath) ?>">
+                                    <input type="hidden" name="single" value="<?= $single->getID() ?>">
+                                    <select name="team" class="form-select form-select-sm" required aria-label="<?= t('Team') ?>">
+                                        <option value=""><?= t('Add to team…') ?></option>
+                                        <?php foreach ($assignTeams as $item) { ?>
+                                            <option value="<?= $item->getID() ?>"><?= h($item->getDisplayName()) ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary ms-1" title="<?= t('Add to team') ?>"><i class="fas fa-user-plus"></i></button>
+                                </form>
+                            <?php } ?>
+                            <?php $button('remove_single', ['single' => $single->getID()], '<i class="fas fa-times"></i>', 'btn-outline-danger', t('Remove %s from %s?', $entry['name'], $singlePool->getName())) ?>
+                        </td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        <?php } ?>
     <?php } ?>
 
 <?php } elseif ($mode === 'board') { ?>

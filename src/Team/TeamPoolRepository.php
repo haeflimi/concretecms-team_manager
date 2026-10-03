@@ -119,6 +119,16 @@ class TeamPoolRepository
     }
 
     /**
+     * Single players of all pools.
+     *
+     * @return TeamPoolUser[]
+     */
+    public function getAllSingles(): array
+    {
+        return $this->em->getRepository(TeamPoolUser::class)->findBy([], ['joinedAt' => 'ASC']);
+    }
+
+    /**
      * @return TeamPoolUser[]
      */
     public function getSinglesOfUser(int $uID): array

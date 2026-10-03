@@ -68,7 +68,9 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
 **Dashboard › Users & Groups › Teams** (`/dashboard/users/teams`), access is controlled by the page permissions.
 
 * **List** – all teams with pool, captains, member count and creation date, pool filter, search, and totals
-  (teams, users in teams, empty teams, pools, players looking for a team).
+  (teams, users in teams, empty teams, pools, players looking for a team). Below the teams the players looking for
+  a team, with their pool and note: add them to a team of their pool or remove them from the pool. The pool filter
+  and the search (username, note) apply to them too.
 * **Pools** – create, edit and delete pools; per pool: add/remove teams, add/remove single players and
   add them to a team of the pool.
 * **Board** – every team as a card, filterable by pool. Drag a member onto another card to move them, add
