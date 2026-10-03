@@ -12,10 +12,7 @@ defined('C5_EXECUTE') or die('Access Denied.');
  * @var \TeamManager\Entity\TeamRequest[][] $openJoinRequests by team ID, only for teams I captain
  * @var \TeamManager\Entity\TeamRequest[][] $openInvites by team ID, only for teams I captain
  * @var array $flashMessages
- * @var int $allowTeamCreation
- * @var \TeamManager\Entity\TeamPool|null $pool pool the block is limited to, null = all teams
- * @var bool $poolMissing the configured pool was deleted
- * @var string|null $creationBlockedReason why teams can't be created in the pool right now
+ * @var \TeamManager\Entity\TeamPool[] $creationPools pools I can create a new team in
  * @var \TeamManager\Entity\TeamPoolUser[] $mySingles pools I'm listed in as single player
  * @var int $bID
  */
@@ -52,15 +49,9 @@ $userName = function (int $uID) use ($userInfoRepository) {
         </div>
     <?php } ?>
 
-    <?php if ($poolMissing) { ?>
-        <p class="text-muted"><?= t('The team pool of this block does not exist anymore.') ?></p>
-    <?php } elseif (!$me) { ?>
+    <?php if (!$me) { ?>
         <p class="text-muted"><?= t('Please log in to manage your teams.') ?></p>
     <?php } else { ?>
-
-        <?php if ($pool) { ?>
-            <p class="team-manager-pool-name text-muted"><i class="fa fa-users"></i> <?= h($pool->getName()) ?></p>
-        <?php } ?>
 
         <?php if ($invitations) { ?>
             <section class="team-manager-invitations mb-4">
@@ -102,7 +93,7 @@ $userName = function (int $uID) use ($userInfoRepository) {
         <section class="team-manager-teams mb-4">
             <h4><?= t('My Teams') ?></h4>
             <?php if (!$teams) { ?>
-                <p class="text-muted"><?= $pool ? t('You are not in a team of %s yet.', h($pool->getName())) : t('You are not in a team yet.') ?></p>
+                <p class="text-muted"><?= t('You are not in a team yet.') ?></p>
             <?php } ?>
 
             <?php foreach ($teams as $team) {
@@ -117,7 +108,7 @@ $userName = function (int $uID) use ($userInfoRepository) {
                         <?php } ?>
                         <span class="h5 mb-0 flex-grow-1">
                             <?= h($team->getDisplayName()) ?>
-                            <?php if (!$pool && $team->getPool()) { ?>
+                            <?php if ($team->getPool()) { ?>
                                 <small class="text-muted">· <?= h($team->getPool()->getName()) ?></small>
                             <?php } ?>
                         </span>
@@ -244,12 +235,9 @@ $userName = function (int $uID) use ($userInfoRepository) {
             <?php } ?>
         </section>
 
-        <?php if ($allowTeamCreation) { ?>
+        <?php if ($creationPools) { ?>
             <section class="team-manager-create">
                 <h4><?= t('Create a Team') ?></h4>
-                <?php if ($creationBlockedReason) { ?>
-                    <p class="text-muted"><?= h($creationBlockedReason) ?></p>
-                <?php } else { ?>
                 <form method="post" action="<?= h($view->action('create_team')) ?>">
                     <?php $token->output('team_create') ?>
                     <div class="form-row row g-2 mb-2">
@@ -261,11 +249,20 @@ $userName = function (int $uID) use ($userInfoRepository) {
                         </div>
                     </div>
                     <div class="mb-2">
+                        <select name="pool" class="form-select form-control" required aria-label="<?= t('Team Pool') ?>">
+                            <?php if (count($creationPools) > 1) { ?>
+                                <option value=""><?= t('Choose a team pool') ?></option>
+                            <?php } ?>
+                            <?php foreach ($creationPools as $creationPool) { ?>
+                                <option value="<?= $creationPool->getID() ?>"><?= h($creationPool->getName()) ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="mb-2">
                         <textarea name="description" class="form-control" rows="2" placeholder="<?= t('Description (optional)') ?>"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?= t('Create Team') ?></button>
                 </form>
-                <?php } ?>
             </section>
         <?php } ?>
 

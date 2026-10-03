@@ -22,7 +22,7 @@ class Controller extends Package implements ProviderAggregateInterface
     protected $pkgHandle = 'team_manager';
     protected $appVersionRequired = '9.4';
     protected $phpVersionRequired = '8.0';
-    protected $pkgVersion = '3.2.0';
+    protected $pkgVersion = '3.3.0';
     protected $pkgAutoloaderRegistries = [
         'src' => '\TeamManager',
     ];
@@ -87,7 +87,24 @@ class Controller extends Package implements ProviderAggregateInterface
         $this->removeLegacyBlockType();
 
         parent::upgrade();
+        $this->moveMyTeamsSettingsToPools();
         $this->installContent();
+    }
+
+    /**
+     * 3.3 moved "allow team creation" from the My Teams block to the pool and dropped the block's pool option:
+     * pools a block allowed creating teams in keep allowing it.
+     */
+    private function moveMyTeamsSettingsToPools()
+    {
+        $db = $this->app->make(Connection::class);
+        if (!$db->fetchOne("SHOW TABLES LIKE 'btTeamManagerMyTeams'")) {
+            return;
+        }
+        $db->executeStatement(
+            'UPDATE tmTeamPool SET allowTeamCreation = 1 WHERE gID IN (SELECT poolID FROM btTeamManagerMyTeams WHERE allowTeamCreation = 1)'
+        );
+        $db->executeStatement('DROP TABLE btTeamManagerMyTeams');
     }
 
     /**

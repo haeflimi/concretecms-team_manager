@@ -40,6 +40,13 @@ class TeamPool
     protected $allowTeams = true;
 
     /**
+     * Users may create new teams in the pool themselves (My Teams block).
+     *
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    protected $allowTeamCreation = false;
+
+    /**
      * Users may join as free agent looking for a team.
      *
      * @ORM\Column(type="boolean")
@@ -132,6 +139,18 @@ class TeamPool
     public function setAllowTeams(bool $allowTeams): self
     {
         $this->allowTeams = $allowTeams;
+
+        return $this;
+    }
+
+    public function allowsTeamCreation(): bool
+    {
+        return (bool) $this->allowTeamCreation;
+    }
+
+    public function setAllowTeamCreation(bool $allowTeamCreation): self
+    {
+        $this->allowTeamCreation = $allowTeamCreation;
 
         return $this;
     }

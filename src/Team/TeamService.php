@@ -95,16 +95,21 @@ class TeamService
 
     /**
      * @param bool $joinAsCaptain false creates an empty team (used by admins), members are added with addMember()
-     * @param TeamPool|null $pool pool to create the team in
+     * @param TeamPool|null $pool pool to create the team in, users can only create teams in pools that allow it
      */
     public function create(string $name, string $tag, string $description, UserInfo $creator, bool $joinAsCaptain = true, ?TeamPool $pool = null): Team
     {
         [$name, $tag] = $this->validateProfile($name, $tag, 0);
-        if ($pool) {
-            $this->assertPoolAcceptsTeam($pool);
-            if ($joinAsCaptain) {
-                $this->assertFreeInPool($pool, $creator);
+        if (!$this->adminMode) {
+            if (!$pool) {
+                throw new UserMessageException(t('Please choose a team pool for the new team.'));
             }
+            $reason = $this->getTeamCreationBlockedReason($pool, $creator);
+            if ($reason !== null) {
+                throw new UserMessageException($reason);
+            }
+        } elseif ($pool && $joinAsCaptain) {
+            $this->assertFreeInPool($pool, $creator);
         }
 
         $team = new Team($name, (int) $creator->getUserID());
@@ -524,6 +529,38 @@ class TeamService
                 $pool->getName()
             ));
         }
+    }
+
+    /**
+     * Pools the user can create a new team in right now.
+     *
+     * @return TeamPool[] sorted by name
+     */
+    public function getPoolsForTeamCreation(UserInfo $user): array
+    {
+        return array_values(array_filter($this->pools->getAll(true), function (TeamPool $pool) use ($user) {
+            return $this->getTeamCreationBlockedReason($pool, $user) === null;
+        }));
+    }
+
+    /**
+     * Why the user can't create a team in the pool, null if they can. The creator joins as captain,
+     * so they must not be in another team of the pool yet.
+     */
+    protected function getTeamCreationBlockedReason(TeamPool $pool, UserInfo $user): ?string
+    {
+        if (!$pool->isOpen() || !$pool->allowsTeamCreation()) {
+            return t('New teams can\'t be created in %s.', $pool->getName());
+        }
+        if ($pool->getMaxTeams() > 0 && $this->pools->countTeams($pool) >= $pool->getMaxTeams()) {
+            return t('%s is full (%s teams max).', $pool->getName(), $pool->getMaxTeams());
+        }
+        $other = $this->pools->getTeamOfUser($pool, (int) $user->getUserID());
+        if ($other) {
+            return t('You are already in the team %s of %s. Users can only be in one team per pool.', $other->getName(), $pool->getName());
+        }
+
+        return null;
     }
 
     protected function assertPoolAcceptsTeam(TeamPool $pool): void

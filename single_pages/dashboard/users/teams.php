@@ -463,6 +463,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
                         <?php } else { ?>
                             <span class="badge bg-success"><?= t('Open') ?></span>
                             <?php if ($item->allowsTeams()) { ?><span class="badge bg-light text-dark"><?= t('Teams') ?></span><?php } ?>
+                            <?php if ($item->allowsTeamCreation()) { ?><span class="badge bg-light text-dark"><?= t('Team creation') ?></span><?php } ?>
                             <?php if ($item->allowsSingles()) { ?><span class="badge bg-light text-dark"><?= t('Single players') ?></span><?php } ?>
                         <?php } ?>
                     </td>
@@ -595,6 +596,10 @@ $button = function (string $task, array $fields, string $label, string $class, ?
                     <div class="form-check">
                         <?= $form->checkbox('allowTeams', 1, $pool ? $pool->allowsTeams() : true) ?>
                         <?= $form->label('allowTeams', t('Captains can register their teams'), ['class' => 'form-check-label']) ?>
+                    </div>
+                    <div class="form-check">
+                        <?= $form->checkbox('allowTeamCreation', 1, $pool ? $pool->allowsTeamCreation() : false) ?>
+                        <?= $form->label('allowTeamCreation', t('Users can create new teams in this pool'), ['class' => 'form-check-label']) ?>
                     </div>
                     <div class="form-check">
                         <?= $form->checkbox('allowSingles', 1, $pool ? $pool->allowsSingles() : true) ?>

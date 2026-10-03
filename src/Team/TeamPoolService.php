@@ -92,6 +92,7 @@ class TeamPoolService
     {
         $pool->setOpen(!empty($data['open']));
         $pool->setAllowTeams(!empty($data['allowTeams']));
+        $pool->setAllowTeamCreation(!empty($data['allowTeamCreation']));
         $pool->setAllowSingles(!empty($data['allowSingles']));
         $pool->setMaxTeams((int) ($data['maxTeams'] ?? 0));
     }

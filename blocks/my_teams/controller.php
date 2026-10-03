@@ -6,8 +6,6 @@ use Concrete\Core\Error\UserMessageException;
 use Concrete\Core\User\UserInfo;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use TeamManager\Block\AbstractTeamBlockController;
-use TeamManager\Entity\Team;
-use TeamManager\Entity\TeamPool;
 use TeamManager\Entity\TeamRequest;
 use TeamManager\Team\TeamPoolRepository;
 use TeamManager\Team\TeamRepository;
@@ -16,16 +14,7 @@ use TeamManager\Team\TeamService;
 
 class Controller extends AbstractTeamBlockController
 {
-    protected $btTable = 'btTeamManagerMyTeams';
-    protected $btInterfaceWidth = 500;
-    protected $btInterfaceHeight = 350;
     protected $btDefaultSet = 'social';
-
-    public $allowTeamCreation;
-    /**
-     * @var int pool the whole block is limited to (teams shown, invitations, new teams, free agent entries), 0 = all
-     */
-    public $poolID;
 
     public function getBlockTypeName()
     {
@@ -37,43 +26,10 @@ class Controller extends AbstractTeamBlockController
         return t('Lets users create and manage their teams, invite members and answer invitations.');
     }
 
-    public function add()
-    {
-        $this->set('allowTeamCreation', 1);
-        $this->set('poolID', 0);
-        $this->setPoolOptions();
-    }
-
-    public function edit()
-    {
-        $this->setPoolOptions();
-    }
-
-    protected function setPoolOptions(): void
-    {
-        $options = [0 => t('All teams (new teams without pool)')];
-        foreach ($this->app->make(TeamPoolRepository::class)->getAll() as $pool) {
-            $options[$pool->getID()] = $pool->getName();
-        }
-        $this->set('poolOptions', $options);
-    }
-
-    public function save($args)
-    {
-        parent::save([
-            'allowTeamCreation' => empty($args['allowTeamCreation']) ? 0 : 1,
-            'poolID' => (int) ($args['poolID'] ?? 0),
-        ]);
-    }
-
     public function view()
     {
         parent::view();
         $me = $this->getCurrentUserInfo();
-        $pool = $this->getPool();
-        $this->set('pool', $pool);
-        // the pool the block was limited to has been deleted, the block stays inactive until it is edited
-        $this->set('poolMissing', $this->poolID && !$pool);
         $teams = [];
         $invitations = [];
         $openJoinRequests = [];
@@ -85,12 +41,10 @@ class Controller extends AbstractTeamBlockController
             $service = $this->app->make(TeamService::class);
 
             foreach ($requestRepository->getPendingForUser((int) $me->getUserID(), TeamRequest::TYPE_INVITE) as $request) {
-                if ($this->inScope($request->getTeam())) {
-                    $invitations[] = ['request' => $request, 'team' => $request->getTeam()];
-                }
+                $invitations[] = ['request' => $request, 'team' => $request->getTeam()];
             }
 
-            $teams = array_values(array_filter($teamRepository->getForUser((int) $me->getUserID()), [$this, 'inScope']));
+            $teams = $teamRepository->getForUser((int) $me->getUserID());
             foreach ($teams as $team) {
                 if ($service->isCaptain($team, $me)) {
                     $openJoinRequests[$team->getID()] = $requestRepository->getPendingForTeam($team->getID(), TeamRequest::TYPE_JOIN);
@@ -104,28 +58,22 @@ class Controller extends AbstractTeamBlockController
         $this->set('openJoinRequests', $openJoinRequests);
         $this->set('openInvites', $openInvites);
         $this->set('userInfoRepository', $this->app->make(\Concrete\Core\User\UserInfoRepository::class));
-        $mySingles = $me ? $this->app->make(TeamPoolRepository::class)->getSinglesOfUser((int) $me->getUserID()) : [];
-        $this->set('mySingles', array_values(array_filter($mySingles, function ($single) use ($pool) {
-            return !$this->poolID || ($pool && $single->getPool()->getID() === $pool->getID());
-        })));
-        $this->set('creationBlockedReason', $this->getCreationBlockedReason($pool));
+        $this->set('mySingles', $me ? $this->app->make(TeamPoolRepository::class)->getSinglesOfUser((int) $me->getUserID()) : []);
+        // the pool settings decide where users can create teams
+        $this->set('creationPools', $me ? $this->app->make(TeamService::class)->getPoolsForTeamCreation($me) : []);
     }
 
     public function action_create_team($bID = null)
     {
         return $this->handle('team_create', function (UserInfo $me, TeamService $service) {
-            $this->assertActive();
-            if (!$this->allowTeamCreation) {
-                throw new UserMessageException(t('Creating teams is not allowed here.'));
-            }
-            // the pool settings (open, allow teams, max. teams) are checked by the service
+            // the pool settings (open, allow team creation, max. teams) are checked by the service
             $team = $service->create(
                 (string) $this->request->request->get('name'),
                 (string) $this->request->request->get('tag'),
                 (string) $this->request->request->get('description'),
                 $me,
                 true,
-                $this->getPool()
+                $this->app->make(TeamPoolRepository::class)->getByID((int) $this->request->request->get('pool'))
             );
 
             return t('Team %s has been created. You are its captain.', $team->getName());
@@ -219,82 +167,13 @@ class Controller extends AbstractTeamBlockController
     {
         return $this->handle('team_pool_leave', function (UserInfo $me, TeamService $service) {
             $single = $this->app->make(TeamPoolRepository::class)->getSingle((int) $this->request->request->get('single'));
-            if (!$single || ($this->poolID && $single->getPool()->getID() !== (int) $this->poolID)) {
+            if (!$single) {
                 throw new UserMessageException(t('You are not listed in this pool anymore.'));
             }
             $service->leavePool($single, $me);
 
             return t('You are no longer listed in %s.', $single->getPool()->getName());
         });
-    }
-
-    /**
-     * Only teams of the configured pool can be changed through this block.
-     */
-    protected function postedTeam(): Team
-    {
-        $team = parent::postedTeam();
-        $this->assertInScope($team);
-
-        return $team;
-    }
-
-    protected function postedRequest(): TeamRequest
-    {
-        $request = parent::postedRequest();
-        $this->assertInScope($request->getTeam());
-
-        return $request;
-    }
-
-    protected function getPool(): ?TeamPool
-    {
-        return $this->poolID ? $this->app->make(TeamPoolRepository::class)->getByID((int) $this->poolID) : null;
-    }
-
-    /**
-     * @param Team $team
-     */
-    public function inScope($team): bool
-    {
-        if (!$this->poolID) {
-            return true;
-        }
-
-        return $team->getPool() !== null && $team->getPool()->getID() === (int) $this->poolID;
-    }
-
-    protected function assertActive(): void
-    {
-        if ($this->poolID && !$this->getPool()) {
-            throw new UserMessageException(t('The pool of this block does not exist anymore.'));
-        }
-    }
-
-    protected function assertInScope(Team $team): void
-    {
-        $this->assertActive();
-        if (!$this->inScope($team)) {
-            throw new UserMessageException(t('%s is not part of %s.', $team->getName(), $this->getPool()->getName()));
-        }
-    }
-
-    /**
-     * Why users can't create a team in the block's pool right now, null if they can.
-     */
-    protected function getCreationBlockedReason(?TeamPool $pool): ?string
-    {
-        if (!$pool) {
-            return null;
-        }
-        if (!$pool->isOpen() || !$pool->allowsTeams()) {
-            return t('%s does not accept new teams at the moment.', $pool->getName());
-        }
-        if ($pool->getMaxTeams() > 0 && $this->app->make(TeamPoolRepository::class)->countTeams($pool) >= $pool->getMaxTeams()) {
-            return t('%s is full (%s teams max).', $pool->getName(), $pool->getMaxTeams());
-        }
-
-        return null;
     }
 
     /**

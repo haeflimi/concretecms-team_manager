@@ -42,7 +42,8 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
 * A team is in at most one pool, teams can also have no pool.
 * A user can be in **only one team per pool**. Joining, invites, accepting, adding and moving are rejected otherwise.
 * Single players are listed as "looking for a team" until they join a team of that pool, then their entry is removed.
-* Pool settings: open for joining, captains may register teams, users may join as single player, max. teams.
+* Pool settings: open for joining, captains may register teams, users may create new teams (My Teams), users may
+  join as single player, max. teams.
   They apply to users only, admins can always add teams and players.
 * Deleting a pool deletes its group, the teams are kept (they have no pool afterwards). Deleting a pool group in
   Dashboard › Groups has the same effect.
@@ -50,11 +51,10 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
 
 * **My Teams** – answer invitations, create teams, manage your teams (invite, approve join requests,
   promote/demote captains, remove members, edit profile, leave, disband), see the pools you're listed in as
-  single player.
-  Option **Team Pool**: limits the whole block to one pool. Only the user's teams, invitations and free agent
-  entries of that pool are shown, actions on other teams are rejected and new teams are created in the pool
-  (its settings apply: the create form is hidden while the pool is closed, doesn't allow teams or is full).
-  Without a pool the block shows all teams and creates teams without pool.
+  single player. The block has no options.
+  Users can only create teams in a pool: the create form lists the pools that are open, allow team creation, aren't
+  full and where the user isn't in a team yet, and is hidden if there is none. Teams without pool are created on the
+  dashboard.
 * **Team Directory** – overview of all pools and the teams without pool, search across all teams, pool view
   (`?pool=<id>`: teams, players looking for a team, join as single player, register your team, invite players
   to your team) and team view (`?team=<id>`, "Request to join").
