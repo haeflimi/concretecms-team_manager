@@ -63,6 +63,7 @@ class TeamPoolService
     public function update(TeamPool $pool, array $data): TeamPool
     {
         $name = $this->validateName((string) ($data['name'] ?? ''), $pool->getID());
+        $this->assertTeamsFit($pool, (int) ($data['maxTeamSize'] ?? 0));
         $group = $pool->getGroup();
         if ($group) {
             $group->update($name, trim((string) ($data['description'] ?? '')));
@@ -95,6 +96,31 @@ class TeamPoolService
         $pool->setAllowTeamCreation(!empty($data['allowTeamCreation']));
         $pool->setAllowSingles(!empty($data['allowSingles']));
         $pool->setMaxTeams((int) ($data['maxTeams'] ?? 0));
+        $pool->setMaxTeamSize((int) ($data['maxTeamSize'] ?? 0));
+    }
+
+    /**
+     * All teams of the pool must stay within its max. team size.
+     */
+    protected function assertTeamsFit(TeamPool $pool, int $maxTeamSize): void
+    {
+        if ($maxTeamSize <= 0) {
+            return;
+        }
+        $tooBig = [];
+        // queried, the pool's teams collection misses teams moved into the pool during this request
+        foreach ($this->app->make(TeamRepository::class)->findAll($pool) as $team) {
+            if ($team->getMemberCount() > $maxTeamSize) {
+                $tooBig[] = t('%s (%s)', $team->getName(), $team->getMemberCount());
+            }
+        }
+        if ($tooBig) {
+            throw new UserMessageException(t(
+                'These teams have more than %s members, make them smaller first: %s',
+                $maxTeamSize,
+                implode(', ', $tooBig)
+            ));
+        }
     }
 
     protected function validateName(string $name, int $poolID): string

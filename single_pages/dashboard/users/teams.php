@@ -492,7 +492,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
     <div class="row">
         <?php if (!$isNew) { ?>
             <div class="col-lg-7 mb-4">
-                <h4><?= t('Teams (%s)', count($poolTeams)) ?><?= $pool->getMaxTeams() ? ' <small class="text-muted">' . t('max. %s', $pool->getMaxTeams()) . '</small>' : '' ?></h4>
+                <h4><?= t('Teams (%s)', count($poolTeams)) ?><?= $pool->getMaxTeams() ? ' <small class="text-muted">' . t('max. %s', $pool->getMaxTeams()) . '</small>' : '' ?><?= $pool->getMaxTeamSize() ? ' <small class="text-muted">· ' . t('max. %s members per team', $pool->getMaxTeamSize()) . '</small>' : '' ?></h4>
                 <?php if (!$poolTeams) { ?>
                     <p class="text-muted"><?= t('No teams in this pool yet.') ?></p>
                 <?php } else { ?>
@@ -611,6 +611,11 @@ $button = function (string $task, array $fields, string $label, string $class, ?
                     <?= $form->label('maxTeams', t('Maximum number of teams')) ?>
                     <?= $form->number('maxTeams', $pool ? $pool->getMaxTeams() : 0, ['min' => 0]) ?>
                     <div class="form-text"><?= t('0 = unlimited') ?></div>
+                </div>
+                <div class="mb-3">
+                    <?= $form->label('maxTeamSize', t('Maximum team size')) ?>
+                    <?= $form->number('maxTeamSize', $pool ? $pool->getMaxTeamSize() : 0, ['min' => 0]) ?>
+                    <div class="form-text"><?= t('Members per team, applies to admins too. 0 = the global setting applies.') ?></div>
                 </div>
                 <button type="submit" class="btn btn-primary"><?= $isNew ? t('Create Pool') : t('Save') ?></button>
             </form>

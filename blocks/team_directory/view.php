@@ -217,6 +217,9 @@ $teamItem = function (Team $item, bool $showPool) use ($logoURL, $pageURL, $join
         <h5>
             <?= t('Teams') ?>
             <small class="text-muted"><?= $pool->getMaxTeams() ? t('%s of %s', $poolTeamCount, $pool->getMaxTeams()) : $poolTeamCount ?></small>
+            <?php if ($pool->getMaxTeamSize()) { ?>
+                <small class="text-muted">· <?= t('max. %s members per team', $pool->getMaxTeamSize()) ?></small>
+            <?php } ?>
         </h5>
         <?php if ($poolTeams) { ?>
             <ul class="list-group mb-4">

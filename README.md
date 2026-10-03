@@ -31,7 +31,7 @@ Changes made to pool groups in Dashboard › Groups are overwritten on the next 
 The IDs of the group type, roles and folders are stored in the package config
 (`team_manager::settings.*`), see `config/settings.php` for the other options:
 
-* `max_team_size` – members per team, 0 = unlimited
+* `max_team_size` – members per team, 0 = unlimited (teams in a pool with its own max. team size use that instead)
 * `request_expiry_days` – open invitations / join requests expire after this many days, 0 = never
 * `tag_max_length` – max length of the team tag
 
@@ -45,6 +45,9 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
 * Pool settings: open for joining, captains may register teams, users may create new teams (My Teams), users may
   join as single player, max. teams.
   They apply to users only, admins can always add teams and players.
+* **Max. team size** (0 = the global `max_team_size` applies): members per team of the pool. It applies to admins
+  too: adding or moving members into a full team, and putting a too big team into the pool are rejected. The limit
+  can't be lowered below the size of a team already in the pool.
 * Deleting a pool deletes its group, the teams are kept (they have no pool afterwards). Deleting a pool group in
   Dashboard › Groups has the same effect.
 
@@ -75,7 +78,7 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
   another team, change roles, see/cancel open invitations and join requests, delete the team.
 * **Add Team** – create a team, optionally with a captain right away.
 
-Admin actions use `TeamService::asAdmin()`: captain checks and `max_team_size` are skipped, and a team is not
+Admin actions use `TeamService::asAdmin()`: captain checks and the global `max_team_size` are skipped, and a team is not
 deleted automatically when its last member is removed (users leaving still delete an empty team).
 The first member added to a team without captain becomes captain.
 

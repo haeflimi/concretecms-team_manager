@@ -22,7 +22,7 @@ class Controller extends Package implements ProviderAggregateInterface
     protected $pkgHandle = 'team_manager';
     protected $appVersionRequired = '9.4';
     protected $phpVersionRequired = '8.0';
-    protected $pkgVersion = '3.3.0';
+    protected $pkgVersion = '3.4.0';
     protected $pkgAutoloaderRegistries = [
         'src' => '\TeamManager',
     ];

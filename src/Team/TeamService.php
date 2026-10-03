@@ -75,9 +75,9 @@ class TeamService
     }
 
     /**
-     * Returns a service instance for administrators (dashboard): captain checks, the team size limit and the
+     * Returns a service instance for administrators (dashboard): captain checks, the global team size limit and the
      * pool settings (open, allow teams / singles, max teams) are skipped and teams are not deleted automatically
-     * when their last member is removed. The one-team-per-pool rule still applies.
+     * when their last member is removed. The one-team-per-pool rule and the pool's max. team size still apply.
      * Access control is up to the caller, e.g. the dashboard page permissions.
      */
     public function asAdmin(): self
@@ -353,6 +353,15 @@ class TeamService
         }
         if ($pool) {
             $this->assertPoolAcceptsTeam($pool);
+            if ($pool->getMaxTeamSize() > 0 && $team->getMemberCount() > $pool->getMaxTeamSize()) {
+                throw new UserMessageException(t(
+                    '%s has %s members, teams of %s can have at most %s.',
+                    $team->getName(),
+                    $team->getMemberCount(),
+                    $pool->getName(),
+                    $pool->getMaxTeamSize()
+                ));
+            }
             foreach ($team->getMembers() as $member) {
                 if ($member->getUserInfo()) {
                     $this->assertFreeInPool($pool, $member->getUserInfo(), [$team->getID()]);
@@ -436,9 +445,7 @@ class TeamService
 
     protected function addMemberUnchecked(Team $team, UserInfo $user, UserInfo $actor, bool $captain, array $ignoreTeamIDs = []): void
     {
-        if (!$this->adminMode) {
-            $this->assertCapacity($team);
-        }
+        $this->assertCapacity($team);
         $this->enterTeam($team, $user, $captain || count($team->getCaptains()) === 0, $ignoreTeamIDs);
         $this->requests->cancelPending($team->getID(), (int) $user->getUserID(), (int) $actor->getUserID());
         $this->dispatch('on_team_member_join', $team, $user, $actor);
@@ -505,9 +512,30 @@ class TeamService
         $this->assertCapacity($team);
     }
 
+    /**
+     * Max. number of members of the team: the pool's max. team size, or the global max_team_size if the pool
+     * doesn't set one, 0 = unlimited.
+     */
+    public function getMaxTeamSize(Team $team): int
+    {
+        $pool = $team->getPool();
+        if ($pool && $pool->getMaxTeamSize() > 0) {
+            return $pool->getMaxTeamSize();
+        }
+
+        return $this->config->getMaxTeamSize();
+    }
+
+    /**
+     * The pool's max. team size applies to admins too, the global max_team_size only to users.
+     */
     protected function assertCapacity(Team $team): void
     {
-        $max = $this->config->getMaxTeamSize();
+        $pool = $team->getPool();
+        if ($this->adminMode && !($pool && $pool->getMaxTeamSize() > 0)) {
+            return;
+        }
+        $max = $this->getMaxTeamSize($team);
         if ($max > 0 && $team->getMemberCount() >= $max) {
             throw new UserMessageException(t('The team is full (%s members max).', $max));
         }

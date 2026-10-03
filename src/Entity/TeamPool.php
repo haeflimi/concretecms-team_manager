@@ -61,6 +61,13 @@ class TeamPool
     protected $maxTeams = 0;
 
     /**
+     * Maximum number of members per team of the pool, 0 = the global max_team_size applies.
+     *
+     * @ORM\Column(type="integer", options={"unsigned": true, "default": 0})
+     */
+    protected $maxTeamSize = 0;
+
+    /**
      * @ORM\Column(type="datetime")
      */
     protected $createdAt;
@@ -175,6 +182,18 @@ class TeamPool
     public function setMaxTeams(int $maxTeams): self
     {
         $this->maxTeams = max(0, $maxTeams);
+
+        return $this;
+    }
+
+    public function getMaxTeamSize(): int
+    {
+        return (int) $this->maxTeamSize;
+    }
+
+    public function setMaxTeamSize(int $maxTeamSize): self
+    {
+        $this->maxTeamSize = max(0, $maxTeamSize);
 
         return $this;
     }
