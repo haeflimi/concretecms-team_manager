@@ -56,6 +56,21 @@ $currentPath = $basePath . [
 $poolsButton = '<a href="' . h($url('pools')) . '" class="btn btn-secondary"><i class="fas fa-layer-group"></i> ' . t('Pools') . '</a>';
 
 /**
+ * List / board switch, both always shown, the active one highlighted. Keeps the pool filter.
+ */
+$viewSwitch = function () use ($mode, $url, $poolFilter) {
+    $query = $poolFilter !== '' ? '?pool=' . rawurlencode($poolFilter) : '';
+    $html = '<div class="btn-group" role="group" aria-label="' . h(t('View')) . '">';
+    foreach (['list' => ['fa-list', t('List'), $url()], 'board' => ['fa-columns', t('Board'), $url('board')]] as $key => [$icon, $label, $href]) {
+        $active = $mode === $key;
+        $html .= '<a href="' . h($href . $query) . '" class="btn ' . ($active ? 'btn-primary active' : 'btn-secondary') . '"'
+            . ($active ? ' aria-current="page"' : '') . '><i class="fas ' . $icon . '"></i> ' . $label . '</a>';
+    }
+
+    return $html . '</div>';
+};
+
+/**
  * GET form to filter list / board by pool.
  */
 $poolFilterSelect = function () use ($poolFilterOptions, $poolFilter) {
@@ -92,7 +107,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 
     <div class="ccm-dashboard-header-buttons">
         <?= $poolsButton ?>
-        <a href="<?= h($url('board') . ($poolFilter !== '' ? '?pool=' . rawurlencode($poolFilter) : '')) ?>" class="btn btn-secondary"><i class="fas fa-columns"></i> <?= t('Board') ?></a>
+        <?= $viewSwitch() ?>
         <a href="<?= h($url('add')) ?>" class="btn btn-primary"><i class="fas fa-plus"></i> <?= t('Add Team') ?></a>
     </div>
 
@@ -180,7 +195,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 
     <div class="ccm-dashboard-header-buttons">
         <?= $poolsButton ?>
-        <a href="<?= h($url() . ($poolFilter !== '' ? '?pool=' . rawurlencode($poolFilter) : '')) ?>" class="btn btn-secondary"><i class="fas fa-list"></i> <?= t('List') ?></a>
+        <?= $viewSwitch() ?>
         <a href="<?= h($url('add') . ($boardPool ? '?pool=' . $boardPool->getID() : '')) ?>" class="btn btn-primary"><i class="fas fa-plus"></i> <?= t('Add Team') ?></a>
     </div>
 
