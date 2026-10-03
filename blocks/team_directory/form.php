@@ -22,14 +22,14 @@ $pageSelector = app('helper/form/page_selector');
         <?= $form->checkbox('onlyListJoinPool', 1, (bool) $onlyListJoinPool) ?>
         <?= $form->label('onlyListJoinPool', t('Only show this pool'), ['class' => 'form-check-label']) ?>
     </div>
-    <div class="help-block"><?= t('Shows the selected pool directly instead of the overview of all pools and teams.') ?></div>
+    <div class="help-block"><?= t('Shows the selected pool directly instead of the overview of all pools.') ?></div>
 </div>
 <div class="form-group">
-    <?= $form->label('itemsPerPage', t('Teams per page')) ?>
+    <?= $form->label('itemsPerPage', t('Search results per page')) ?>
     <?= $form->number('itemsPerPage', $itemsPerPage, ['min' => 1]) ?>
 </div>
 <div class="form-group">
     <?= $form->label('myTeamsPageID', t('My Teams page')) ?>
     <?= $pageSelector->selectPage('myTeamsPageID', $myTeamsPageID ?: null) ?>
-    <div class="help-block"><?= t('Optional. A page with the My Teams block, linked so users can create and manage teams.') ?></div>
+    <div class="help-block"><?= t('Optional. A page with the My Teams block, linked so users can manage their teams.') ?></div>
 </div>

@@ -37,7 +37,8 @@ class TeamRepository
     }
 
     /**
-     * @param TeamPool|false|null $pool null = all teams, false = only teams without pool, TeamPool = teams of that pool
+     * @param TeamPool|bool|null $pool null = all teams, false = only teams without pool, true = only teams in a pool,
+     *                                TeamPool = teams of that pool
      *
      * @return Team[]
      */
@@ -47,7 +48,7 @@ class TeamRepository
     }
 
     /**
-     * @param TeamPool|false|null $pool see findAll()
+     * @param TeamPool|bool|null $pool see findAll()
      *
      * @return array{items: Team[], page: int, pages: int, total: int}
      */
@@ -94,7 +95,7 @@ class TeamRepository
     }
 
     /**
-     * @param TeamPool|false|null $pool see findAll()
+     * @param TeamPool|bool|null $pool see findAll()
      */
     protected function createQuery($pool, string $keywords): QueryBuilder
     {
@@ -106,6 +107,8 @@ class TeamRepository
             $qb->andWhere('t.pool = :pool')->setParameter('pool', $pool);
         } elseif ($pool === false) {
             $qb->andWhere('t.pool is null');
+        } elseif ($pool === true) {
+            $qb->andWhere('t.pool is not null');
         }
         if ($keywords !== '') {
             $qb->andWhere('t.name like :keywords or t.tag like :keywords or t.description like :keywords')

@@ -299,8 +299,11 @@ $teamItem = function (Team $item, bool $showPool) use ($logoURL, $pageURL, $join
 
     <?php } else { ?>
 
-        <?php if ($pools && $keywords === '') { ?>
+        <?php if ($keywords === '') { ?>
             <h4><?= t('Team Pools') ?></h4>
+            <?php if (!$pools) { ?>
+                <p class="text-muted"><?= t('There are no team pools yet.') ?></p>
+            <?php } ?>
             <div class="list-group mb-4">
                 <?php foreach ($pools as $entry) {
                     /** @var TeamPool $item */
@@ -324,27 +327,32 @@ $teamItem = function (Team $item, bool $showPool) use ($logoURL, $pageURL, $join
             </div>
         <?php } ?>
 
-        <h4><?= $keywords !== '' ? t('Teams') : ($pools ? t('Teams without pool') : t('Teams')) ?></h4>
+        <?php if ($keywords !== '') { ?>
+            <p><a href="<?= h($pageURL) ?>"><i class="fa fa-arrow-left"></i> <?= t('All pools') ?></a></p>
+            <h4><?= t('Teams') ?></h4>
+        <?php } ?>
         <form method="get" action="<?= h($pageURL) ?>" class="mb-3">
             <div class="input-group">
-                <input type="search" name="keywords" class="form-control" value="<?= h($keywords) ?>" placeholder="<?= t('Search all teams') ?>" aria-label="<?= t('Search all teams') ?>">
+                <input type="search" name="keywords" class="form-control" value="<?= h($keywords) ?>" placeholder="<?= t('Search teams') ?>" aria-label="<?= t('Search teams') ?>">
                 <div class="input-group-append"><button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i></button></div>
             </div>
         </form>
 
-        <?php if (!$teams) { ?>
-            <p class="text-muted"><?= $keywords !== '' ? t('No teams match your search.') : t('There are no teams without pool.') ?></p>
-        <?php } else { ?>
-            <ul class="list-group mb-3">
-                <?php foreach ($teams as $item) {
-                    $teamItem($item, $keywords !== '');
-                } ?>
-            </ul>
-            <?= $pagination ?>
+        <?php if ($keywords !== '') { ?>
+            <?php if (!$teams) { ?>
+                <p class="text-muted"><?= t('No teams match your search.') ?></p>
+            <?php } else { ?>
+                <ul class="list-group mb-3">
+                    <?php foreach ($teams as $item) {
+                        $teamItem($item, true);
+                    } ?>
+                </ul>
+                <?= $pagination ?>
+            <?php } ?>
         <?php } ?>
     <?php } ?>
 
     <?php if ($me && $myTeamsPage) { ?>
-        <p class="mt-3"><a href="<?= h($myTeamsPage->getCollectionLink()) ?>"><?= t('Create or manage your teams') ?></a></p>
+        <p class="mt-3"><a href="<?= h($myTeamsPage->getCollectionLink()) ?>"><?= t('Manage your teams') ?></a></p>
     <?php } ?>
 </div>

@@ -55,11 +55,12 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
 * **My Teams** – answer invitations, manage your teams (invite, approve join requests,
   promote/demote captains, remove members, edit profile, leave, disband), see the pools you're listed in as
   single player. The block has no options.
-* **Team Directory** – overview of all pools and the teams without pool, search across all teams, pool view
+* **Team Directory** – overview of all pools, search across the teams in pools, pool view
   (`?pool=<id>`: teams, players looking for a team, join as single player, create a team, register your team,
   invite players to your team) and team view (`?team=<id>`, "Request to join").
   Users can only create teams in a pool: "Create a new team" is shown if the pool is open, allows team creation,
-  isn't full and the user isn't in a team of it yet. Teams without pool are created on the dashboard.
+  isn't full and the user isn't in a team of it yet. Teams without pool are created on the dashboard, the
+  directory doesn't list them and they can't be joined there.
   Options: limit joining to one pool, and optionally only show that pool.
 
 ## Dashboard

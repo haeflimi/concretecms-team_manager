@@ -35,7 +35,7 @@ class Controller extends AbstractTeamBlockController
 
     public function getBlockTypeDescription()
     {
-        return t('Lists team pools and teams, lets users join pools as single player and request to join teams.');
+        return t('Lists team pools and their teams, lets users join pools as single player and request to join teams.');
     }
 
     public function add()
@@ -123,9 +123,11 @@ class Controller extends AbstractTeamBlockController
             return;
         }
 
-        // overview: pools, then teams without pool (or all matching teams when searching)
+        // overview: pools, teams only when searching (teams without pool are not listed in the directory)
         $keywords = trim((string) $this->request->query->get('keywords'));
-        $page = $teams->paginate($keywords === '' ? false : null, $keywords, Pagination::getCurrentPage(), (int) $this->itemsPerPage ?: 20);
+        $page = $keywords === ''
+            ? ['items' => [], 'page' => 1, 'pages' => 1, 'total' => 0]
+            : $teams->paginate(true, $keywords, Pagination::getCurrentPage(), (int) $this->itemsPerPage ?: 20);
 
         $poolList = [];
         foreach ($pools->getAll() as $item) {
@@ -243,15 +245,15 @@ class Controller extends AbstractTeamBlockController
     }
 
     /**
-     * Joining (teams, pools) can be limited to one pool in the block options.
+     * Only teams in a pool can be joined here, joining can be limited to one pool in the block options.
      */
     protected function canJoinIn(?TeamPool $pool): bool
     {
-        if (!$this->joinPoolID) {
-            return true;
+        if ($pool === null) {
+            return false;
         }
 
-        return $pool !== null && $pool->getID() === (int) $this->joinPoolID;
+        return !$this->joinPoolID || $pool->getID() === (int) $this->joinPoolID;
     }
 
     protected function assertCanJoinIn(?TeamPool $pool): void
@@ -265,11 +267,11 @@ class Controller extends AbstractTeamBlockController
     }
 
     /**
-     * With "only list the selected pool", teams outside of it aren't shown either.
+     * Teams without pool aren't listed, with "only list the selected pool" teams outside of it neither.
      */
     protected function isListed(?TeamPool $pool): bool
     {
-        return !$this->onlyListJoinPool || $this->canJoinIn($pool);
+        return $pool !== null && (!$this->onlyListJoinPool || $this->canJoinIn($pool));
     }
 
     protected function postedPool(): TeamPool
@@ -294,7 +296,7 @@ class Controller extends AbstractTeamBlockController
 
     protected function setPoolOptions(): void
     {
-        $options = [0 => t('All pools and teams without pool')];
+        $options = [0 => t('All pools')];
         foreach ($this->app->make(TeamPoolRepository::class)->getAll() as $pool) {
             $options[$pool->getID()] = $pool->getName();
         }
