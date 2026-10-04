@@ -273,6 +273,70 @@ class TeamService
     }
 
     /**
+     * Swaps two members of different teams, also when both teams are full. Without $keepCaptain both arrive as
+     * regular members and a team left without captain gets its longest standing member as captain.
+     * Runs in a transaction, if one of them can't enter the other team (one team per pool) nothing changes.
+     */
+    public function swapMembers(Team $teamA, int $uIDA, Team $teamB, int $uIDB, UserInfo $actor, bool $keepCaptain = false): void
+    {
+        if ($teamA->getID() === $teamB->getID()) {
+            return;
+        }
+        $this->assertCaptain($teamA, $actor);
+        $this->assertCaptain($teamB, $actor);
+        $memberA = $teamA->getMember($uIDA);
+        $memberB = $teamB->getMember($uIDB);
+        foreach ([[$memberA, $teamA], [$memberB, $teamB]] as [$member, $team]) {
+            if (!$member || !$member->getUserInfo()) {
+                throw new UserMessageException(t('This user is not a member of %s.', $team->getName()));
+            }
+        }
+        $userA = $memberA->getUserInfo();
+        $userB = $memberB->getUserInfo();
+        $captainA = $keepCaptain && $memberA->isCaptain();
+        $captainB = $keepCaptain && $memberB->isCaptain();
+
+        $this->em->beginTransaction();
+        try {
+            // both leave first, so the full teams have room and the captain succession doesn't kick in
+            foreach ([[$teamA, $memberA], [$teamB, $memberB]] as [$team, $member]) {
+                $team->getMemberCollection()->removeElement($member);
+                $this->em->remove($member);
+            }
+            $this->em->flush();
+
+            $this->enterTeam($teamB, $userA, $captainA, [$teamA->getID()]);
+            $this->enterTeam($teamA, $userB, $captainB, [$teamB->getID()]);
+            foreach ([$teamA, $teamB] as $team) {
+                $members = $team->getMembers();
+                if ($members && !$team->getCaptains()) {
+                    $members[0]->setCaptain(true);
+                }
+            }
+            $this->em->flush();
+            $this->requests->cancelPending($teamB->getID(), $uIDA, (int) $actor->getUserID());
+            $this->requests->cancelPending($teamA->getID(), $uIDB, (int) $actor->getUserID());
+            $this->em->commit();
+        } catch (\Throwable $e) {
+            $this->em->rollback();
+            $this->em->clear();
+            throw $e;
+        }
+
+        // the old pools, if the teams are in different pools (the new ones are synced by enterTeam)
+        if ($teamA->getPool()) {
+            $this->poolMembership->syncUser($teamA->getPool(), $uIDA);
+        }
+        if ($teamB->getPool()) {
+            $this->poolMembership->syncUser($teamB->getPool(), $uIDB);
+        }
+        $this->dispatch('on_team_member_leave', $teamA, $userA, $actor);
+        $this->dispatch('on_team_member_leave', $teamB, $userB, $actor);
+        $this->dispatch('on_team_member_join', $teamB, $userA, $actor);
+        $this->dispatch('on_team_member_join', $teamA, $userB, $actor);
+    }
+
+    /**
      * Removes a member. Members can remove themselves (leave), captains can remove others (kick).
      */
     public function removeMember(Team $team, int $uID, UserInfo $actor): void

@@ -34,6 +34,20 @@ The IDs of the group type, roles and folders are stored in the package config
 * `max_team_size` – members per team, 0 = unlimited (teams in a pool with its own max. team size use that instead)
 * `request_expiry_days` – open invitations / join requests expire after this many days, 0 = never
 * `tag_max_length` – max length of the team tag
+* `team_name_adjectives`, `team_name_nouns` – comma separated word lists for random team names
+  ("Furious Llamas"), used by the **Random** button next to the name when creating a team (Team Directory,
+  Dashboard › Add Team). Taken names are skipped. Override them in `application/config/team_manager/settings.php`:
+
+  ```php
+  <?php
+  return [
+      'team_name_adjectives' => 'Swiss, Alpine, Grumpy',
+      'team_name_nouns' => 'Yodelers, Cheesemakers, Goats',
+  ];
+  ```
+
+  The lists are strings on purpose: an override replaces them as a whole, override arrays would be merged with
+  the default lists by index.
 
 ## Team Pools
 
@@ -73,9 +87,22 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
   and the search (username, note) apply to them too.
 * **Pools** – create, edit and delete pools; per pool: add/remove teams, add/remove single players and
   add them to a team of the pool.
-* **Board** – every team as a card, filterable by pool. Drag a member onto another card to move them, add
-  members by username, promote/demote and remove with the icons on hover. Optionally captains keep their role
-  when moved. Filtered by a pool, the players looking for a team are shown on top and can be dragged onto a team.
+* **Board** – every team as a card, filterable by pool. Teams that aren't full show their free places as empty
+  slots (one "Drop a player here" slot without size limit): drop a member of another team on a slot to move them.
+  Drop a member onto a member of another team to swap the two, this works with full teams too
+  (`TeamService::swapMembers()`, one transaction). Add members by username, promote/demote and remove with the
+  icons on hover. Optionally captains keep their role when moved or swapped, otherwise a team that lost its captain
+  gets its longest standing member as captain. Filtered by a pool, the players looking for a team are shown on top
+  and can be dragged onto an empty slot.
+* **Randomize** – in the list and board view when filtered by a pool, each action asks for confirmation first
+  (`TeamManager\Team\TeamRandomizer`, one transaction, nothing changes if it fails):
+  * *Complete randomize* deletes all teams of the pool and shuffles all its players (team players and players looking
+    for a team) into new teams with random names.
+  * *Randomize unteamed players* shuffles only the players looking for a team into new teams, existing teams stay.
+  * *Randomize names only* gives the pool's teams new random names, everything else stays.
+
+  The players per team are chosen in the dialog (max. the pool's team size limit), the teams are filled evenly and
+  the first player of each new team becomes captain. The pool's max. number of teams is not checked (admin action).
 * **Team** – change the pool, edit name, tag, description and logo, add members (optionally as captain), move members to
   another team, change roles, see/cancel open invitations and join requests, delete the team.
 * **Add Team** – create a team, optionally with a captain right away.

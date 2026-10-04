@@ -205,7 +205,14 @@ $teamItem = function (Team $item, bool $showPool) use ($logoURL, $pageURL, $join
                         <?php $formStart('create_team', 'team_create', ['pool' => $pool->getID()], 'mt-2'); ?>
                             <div class="form-row row g-2 mb-2">
                                 <div class="col-sm-8">
-                                    <input type="text" name="name" class="form-control" required maxlength="64" placeholder="<?= t('Team name') ?>" aria-label="<?= t('Team name') ?>">
+                                    <div class="input-group">
+                                        <input type="text" name="name" class="form-control" required maxlength="64" placeholder="<?= t('Team name') ?>" aria-label="<?= t('Team name') ?>">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary" data-team-name-url="<?= h($view->action('random_team_name')) ?>" title="<?= t('Random name') ?>">
+                                                <i class="fa fa-dice"></i> <?= t('Random') ?>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <input type="text" name="tag" class="form-control" maxlength="16" placeholder="<?= t('Tag (optional)') ?>" aria-label="<?= t('Tag') ?>">

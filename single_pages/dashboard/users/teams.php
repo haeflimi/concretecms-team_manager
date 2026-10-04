@@ -26,6 +26,8 @@ use Concrete\Core\Support\Facade\Url;
  * @var array $listSingles list of ['single' => TeamPoolUser, 'name' => string], list view
  * @var bool $listSinglesShown false when filtered to teams without pool
  * @var Team[][] $singlePoolTeams teams by pool ID, to add single players to
+ * @var TeamPool|null $randomizePool list / board filtered by this pool, enables the randomize menu
+ * @var array $randomizeStats teams, players (in teams), singles, sizeLimit (0 = none), defaultSize
  * team / add:
  * @var array $poolOptions
  * @var int $selectedPoolID
@@ -73,6 +75,34 @@ $viewSwitch = function () use ($mode, $url, $poolFilter) {
     return $html . '</div>';
 };
 
+// only set by the list and board views
+$randomizePool = $randomizePool ?? null;
+$randomizeStats = $randomizeStats ?? [];
+
+/**
+ * "Randomize" menu for the pool the list / board is filtered by, the actions open the confirmation dialogs.
+ */
+$randomizeMenu = function () use ($randomizePool, $randomizeStats) {
+    if (!$randomizePool) {
+        // shown disabled, a pool has to be selected first
+        return '<span class="d-inline-block" tabindex="0" title="' . h(t('Select a pool to randomize its teams')) . '">'
+            . '<button type="button" class="btn btn-secondary dropdown-toggle" disabled style="pointer-events: none;">'
+            . '<i class="fas fa-random"></i> ' . t('Randomize') . '</button></span>';
+    }
+    $items = [
+        'all' => [t('Complete randomize'), $randomizeStats['teams'] + $randomizeStats['singles'] > 0],
+        'singles' => [t('Randomize unteamed players'), $randomizeStats['singles'] > 0],
+        'names' => [t('Randomize names only'), $randomizeStats['teams'] > 0],
+    ];
+    $html = '<div class="btn-group"><button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">'
+        . '<i class="fas fa-random"></i> ' . t('Randomize') . '</button><ul class="dropdown-menu dropdown-menu-end">';
+    foreach ($items as $mode => [$label, $enabled]) {
+        $html .= '<li><button type="button" class="dropdown-item"' . ($enabled ? ' data-bs-toggle="modal" data-bs-target="#team-randomize-' . $mode . '"' : ' disabled') . '>' . $label . '</button></li>';
+    }
+
+    return $html . '</ul></div>';
+};
+
 /**
  * GET form to filter list / board by pool.
  */
@@ -106,10 +136,105 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 
 <datalist id="team-manager-users"></datalist>
 
+<?php if (in_array($mode, ['list', 'board'], true) && $randomizePool) {
+    $poolName = h($randomizePool->getName());
+    $total = $randomizeStats['players'] + $randomizeStats['singles'];
+    $dialogs = [
+        'all' => [
+            t('Completely randomize %s', $poolName),
+            t('All %1$s teams of %2$s are deleted, with their names, tags, descriptions, logos, open invitations and join requests. All %3$s players of %2$s (%4$s in teams, %5$s looking for a team) are shuffled into new teams with random names. The first player of each new team becomes captain.', $randomizeStats['teams'], $poolName, $total, $randomizeStats['players'], $randomizeStats['singles']),
+            $total,
+            'btn-danger',
+        ],
+        'singles' => [
+            t('Randomize the unteamed players of %s', $poolName),
+            t('The %1$s players looking for a team in %2$s are shuffled into new teams with random names. The first player of each new team becomes captain. The existing teams stay as they are.', $randomizeStats['singles'], $poolName),
+            $randomizeStats['singles'],
+            'btn-primary',
+        ],
+        'names' => [
+            t('Randomize the team names of %s', $poolName),
+            t('All %1$s teams of %2$s get new random names. Members, captains, tags, descriptions and logos stay as they are.', $randomizeStats['teams'], $poolName),
+            0,
+            'btn-primary',
+        ],
+    ];
+    foreach ($dialogs as $dialogMode => [$title, $text, $players, $buttonClass]) { ?>
+        <div class="modal fade" id="team-randomize-<?= $dialogMode ?>" tabindex="-1" aria-labelledby="team-randomize-<?= $dialogMode ?>-title" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="post" action="<?= h($url('randomize_pool')) ?>" class="modal-content team-randomize-form" data-players="<?= (int) $players ?>">
+                    <?php $token->output($tokenAction) ?>
+                    <input type="hidden" name="return" value="<?= h($currentPath) ?>">
+                    <input type="hidden" name="pool" value="<?= $randomizePool->getID() ?>">
+                    <input type="hidden" name="mode" value="<?= $dialogMode ?>">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="team-randomize-<?= $dialogMode ?>-title"><?= $title ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= t('Close') ?>"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><?= $text ?></p>
+                        <?php if ($dialogMode !== 'names') { ?>
+                            <div class="mb-2">
+                                <label class="form-label" for="team-randomize-<?= $dialogMode ?>-size"><?= t('Players per team') ?></label>
+                                <input type="number" name="teamSize" id="team-randomize-<?= $dialogMode ?>-size" class="form-control team-randomize-size" required min="1"
+                                    <?php if ($randomizeStats['sizeLimit']) { ?>max="<?= $randomizeStats['sizeLimit'] ?>"<?php } ?>
+                                    value="<?= $randomizeStats['defaultSize'] ?>">
+                                <?php if ($randomizeStats['sizeLimit']) { ?>
+                                    <div class="form-text"><?= t('Max. %s, the max. team size of the pool.', $randomizeStats['sizeLimit']) ?></div>
+                                <?php } ?>
+                            </div>
+                            <p class="small text-muted mb-0 team-randomize-preview"></p>
+                        <?php } ?>
+                        <?php if ($dialogMode === 'all') { ?>
+                            <div class="alert alert-danger mt-3 mb-0"><?= t('This cannot be undone.') ?></div>
+                        <?php } ?>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= t('Cancel') ?></button>
+                        <button type="submit" class="btn <?= $buttonClass ?>"><i class="fas fa-random"></i> <?= t('Randomize') ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <?php } ?>
+    <script>
+    (function () {
+        // "x teams of y players" preview below the team size
+        var i18n = <?= json_encode([
+            'preview' => t('Makes %1$s teams of %2$s players.'),
+            'previewUneven' => t('Makes %1$s teams of %2$s to %3$s players.'),
+        ]) ?>;
+        document.querySelectorAll('.team-randomize-form').forEach(function (form) {
+            var size = form.querySelector('.team-randomize-size');
+            var preview = form.querySelector('.team-randomize-preview');
+            if (!size || !preview) {
+                return;
+            }
+            var update = function () {
+                var players = parseInt(form.dataset.players, 10);
+                var perTeam = parseInt(size.value, 10);
+                if (!(perTeam > 0) || !(players > 0)) {
+                    preview.textContent = '';
+                    return;
+                }
+                var teams = Math.ceil(players / perTeam);
+                var min = Math.floor(players / teams);
+                var max = Math.ceil(players / teams);
+                preview.textContent = (min === max ? i18n.preview : i18n.previewUneven)
+                    .replace('%1$s', teams).replace('%2$s', min).replace('%3$s', max);
+            };
+            size.addEventListener('input', update);
+            update();
+        });
+    })();
+    </script>
+<?php } ?>
+
 <?php if ($mode === 'list') { ?>
 
     <div class="ccm-dashboard-header-buttons">
         <?= $poolsButton ?>
+        <?= $randomizeMenu() ?>
         <?= $viewSwitch() ?>
         <a href="<?= h($url('add')) ?>" class="btn btn-primary"><i class="fas fa-plus"></i> <?= t('Add Team') ?></a>
     </div>
@@ -252,6 +377,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 
     <div class="ccm-dashboard-header-buttons">
         <?= $poolsButton ?>
+        <?= $randomizeMenu() ?>
         <?= $viewSwitch() ?>
         <a href="<?= h($url('add') . ($boardPool ? '?pool=' . $boardPool->getID() : '')) ?>" class="btn btn-primary"><i class="fas fa-plus"></i> <?= t('Add Team') ?></a>
     </div>
@@ -281,6 +407,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
     <div id="team-board" class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3"
          data-token="<?= h($token->generate($tokenAction)) ?>"
          data-move-url="<?= h($url('move_member')) ?>"
+         data-swap-url="<?= h($url('swap_members')) ?>"
          data-add-url="<?= h($url('add_member')) ?>"
          data-remove-url="<?= h($url('remove_member')) ?>"
          data-captain-url="<?= h($url('set_captain')) ?>"
@@ -301,7 +428,8 @@ $button = function (string $task, array $fields, string $label, string $class, ?
         'confirmRemove' => t('Remove %s from %s?'),
         'add' => t('Add'),
         'username' => t('Username'),
-        'empty' => t('No members'),
+        'emptySlot' => t('Empty slot'),
+        'dropHere' => t('Drop a player here'),
         'manage' => t('Manage'),
         'noSingles' => t('Nobody is looking for a team.'),
         'removeSingle' => t('Remove from pool'),
@@ -471,7 +599,12 @@ $button = function (string $task, array $fields, string $label, string $class, ?
         <input type="hidden" name="return" value="<?= h($basePath . '/add') ?>">
         <div class="mb-3">
             <?= $form->label('name', t('Name')) ?>
-            <?= $form->text('name', '', ['required' => 'required', 'maxlength' => 64]) ?>
+            <div class="input-group">
+                <?= $form->text('name', '', ['required' => 'required', 'maxlength' => 64]) ?>
+                <button type="button" class="btn btn-outline-secondary" data-team-name-url="<?= h($url('random_team_name')) ?>" title="<?= t('Random name') ?>">
+                    <i class="fas fa-dice"></i> <?= t('Random') ?>
+                </button>
+            </div>
         </div>
         <div class="mb-3">
             <?= $form->label('tag', t('Tag')) ?>
@@ -738,13 +871,33 @@ $button = function (string $task, array $fields, string $label, string $class, ?
                 });
         }, 250);
     });
+
+    // "Random" buttons fill the name input of their form with a generated team name
+    document.addEventListener('click', function (e) {
+        var button = e.target.closest('[data-team-name-url]');
+        if (!button) {
+            return;
+        }
+        var input = button.form.querySelector('[name="name"]');
+        button.disabled = true;
+        fetch(button.dataset.teamNameUrl, {credentials: 'same-origin'})
+            .then(function (r) { return r.ok ? r.json() : {}; })
+            .then(function (data) {
+                if (data.name) {
+                    input.value = data.name;
+                }
+            })
+            .finally(function () { button.disabled = false; });
+    });
 })();
 </script>
 
 <?php if ($mode === 'board') { ?>
 <style>
     #team-board .team-board-members { min-height: 3rem; }
-    #team-board .team-board-members.drag-over { background: rgba(13, 110, 253, .08); outline: 2px dashed #0d6efd; }
+    #team-board .team-board-slot { border-style: dashed; color: var(--bs-secondary-color, #6c757d); font-size: .875rem; }
+    #team-board .drag-over { background: rgba(13, 110, 253, .08); outline: 2px dashed #0d6efd; outline-offset: -2px; }
+    #team-board .team-board-member.drag-over { outline-color: #fd7e14; background: rgba(253, 126, 20, .1); }
     #team-board .team-board-member, .team-board-single { cursor: grab; }
     .team-board-single { font-size: .9rem; padding: .4rem .6rem; }
     .team-board-single.dragging { opacity: .4; }
@@ -812,6 +965,30 @@ $button = function (string $task, array $fields, string $label, string $class, ?
         return btn;
     }
 
+    function sourceCol() {
+        return dragged && dragged.team ? board.querySelector('.col[data-team-id="' + dragged.team + '"]') : null;
+    }
+
+    // highlights the node while an accepted player is dragged over it and calls onDrop when dropped
+    function dropTarget(node, accepts, onDrop) {
+        node.addEventListener('dragover', function (e) {
+            if (accepts()) {
+                e.preventDefault();
+                node.classList.add('drag-over');
+            }
+        });
+        node.addEventListener('dragleave', function () {
+            node.classList.remove('drag-over');
+        });
+        node.addEventListener('drop', function (e) {
+            e.preventDefault();
+            node.classList.remove('drag-over');
+            if (accepts()) {
+                onDrop();
+            }
+        });
+    }
+
     function renderCard(team) {
         var col = el('div', 'col');
         col.dataset.teamId = team.id;
@@ -826,14 +1003,11 @@ $button = function (string $task, array $fields, string $label, string $class, ?
             titleWrap.appendChild(el('div', 'small text-muted', team.pool));
         }
         header.appendChild(titleWrap);
-        header.appendChild(el('span', 'badge bg-secondary', String(team.members.length)));
+        header.appendChild(el('span', 'badge bg-secondary', team.maxSize ? team.members.length + ' / ' + team.maxSize : String(team.members.length)));
         card.appendChild(header);
 
         var list = el('ul', 'list-group list-group-flush team-board-members');
         list.dataset.teamId = team.id;
-        if (!team.members.length) {
-            list.appendChild(el('li', 'list-group-item text-muted small', i18n.empty));
-        }
         team.members.forEach(function (member) {
             var item = el('li', 'list-group-item d-flex align-items-center team-board-member');
             item.draggable = true;
@@ -865,34 +1039,41 @@ $button = function (string $task, array $fields, string $label, string $class, ?
                 item.classList.remove('dragging');
                 dragged = null;
             });
+            // dropping a member of another team onto this member swaps the two
+            dropTarget(item, function () {
+                return dragged && dragged.user && dragged.team !== team.id;
+            }, function () {
+                post(board.dataset.swapUrl, {
+                    team: dragged.team,
+                    user: dragged.user,
+                    target: team.id,
+                    targetUser: member.id,
+                    keepCaptain: keepCaptain.checked ? 1 : 0
+                }, [col, sourceCol()]);
+            });
             list.appendChild(item);
         });
 
-        list.addEventListener('dragover', function (e) {
-            if (dragged && (dragged.single || dragged.team !== team.id)) {
-                e.preventDefault();
-                list.classList.add('drag-over');
-            }
-        });
-        list.addEventListener('dragleave', function () {
-            list.classList.remove('drag-over');
-        });
-        list.addEventListener('drop', function (e) {
-            e.preventDefault();
-            list.classList.remove('drag-over');
-            if (dragged && dragged.single) {
-                post(board.dataset.assignUrl, {single: dragged.single, team: team.id}, [col]);
-                return;
-            }
-            if (!dragged || dragged.team === team.id) return;
-            var source = board.querySelector('.col[data-team-id="' + dragged.team + '"]');
-            post(board.dataset.moveUrl, {
-                team: dragged.team,
-                target: team.id,
-                user: dragged.user,
-                keepCaptain: keepCaptain.checked ? 1 : 0
-            }, [col, source]);
-        });
+        // free places: one slot per free place, or a single slot when the size is unlimited
+        var free = team.maxSize ? team.maxSize - team.members.length : 1;
+        for (var i = 0; i < free; i++) {
+            var slot = el('li', 'list-group-item team-board-slot', team.maxSize ? i18n.emptySlot : i18n.dropHere);
+            dropTarget(slot, function () {
+                return dragged && (dragged.single || dragged.team !== team.id);
+            }, function () {
+                if (dragged.single) {
+                    post(board.dataset.assignUrl, {single: dragged.single, team: team.id}, [col]);
+                    return;
+                }
+                post(board.dataset.moveUrl, {
+                    team: dragged.team,
+                    target: team.id,
+                    user: dragged.user,
+                    keepCaptain: keepCaptain.checked ? 1 : 0
+                }, [col, sourceCol()]);
+            });
+            list.appendChild(slot);
+        }
         card.appendChild(list);
 
         var footer = el('form', 'card-footer');

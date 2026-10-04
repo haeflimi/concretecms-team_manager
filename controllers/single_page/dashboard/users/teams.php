@@ -15,6 +15,8 @@ use TeamManager\Entity\TeamRequest;
 use TeamManager\Entity\Team;
 use TeamManager\Entity\TeamMember;
 use TeamManager\Team\Pagination;
+use TeamManager\Team\TeamNameGenerator;
+use TeamManager\Team\TeamRandomizer;
 use TeamManager\Team\TeamPoolMembership;
 use TeamManager\Team\TeamPoolRepository;
 use TeamManager\Team\TeamPoolService;
@@ -46,6 +48,7 @@ class Teams extends DashboardPageController
         ]));
         $this->set('stats', $this->getStats());
         $this->setListSingles($keywords);
+        $this->setRandomizeData($this->getPoolFilter());
         $this->setCommon();
     }
 
@@ -99,6 +102,7 @@ class Teams extends DashboardPageController
         // single players of the pool can be dragged onto its teams
         $this->set('boardPool', $pool instanceof TeamPool ? $pool : null);
         $this->set('boardSingles', $pool instanceof TeamPool ? $this->serializeSingles($pool) : []);
+        $this->setRandomizeData($pool);
         $this->setCommon();
     }
 
@@ -211,6 +215,19 @@ class Teams extends DashboardPageController
             $service->moveMember($from, $to, $member->getUserID(), $me, (bool) $this->request->request->get('keepCaptain'));
 
             return [t('%s has been moved from %s to %s.', $member->getUserName(), $from->getName(), $to->getName()), [$from, $to]];
+        });
+    }
+
+    public function swap_members()
+    {
+        return $this->respond(function (UserInfo $me, TeamService $service) {
+            $teamA = $this->postedTeam();
+            $teamB = $this->postedTeam('target');
+            $memberA = $this->postedMember($teamA);
+            $memberB = $this->postedMember($teamB, 'targetUser');
+            $service->swapMembers($teamA, $memberA->getUserID(), $teamB, $memberB->getUserID(), $me, (bool) $this->request->request->get('keepCaptain'));
+
+            return [t('%s and %s have been swapped.', $memberA->getUserName(), $memberB->getUserName()), [$teamA, $teamB]];
         });
     }
 
@@ -413,6 +430,57 @@ class Teams extends DashboardPageController
         return new JsonResponse($names);
     }
 
+    /**
+     * Shuffles the players of a pool into random teams or gives its teams random names, see TeamRandomizer.
+     */
+    public function randomize_pool()
+    {
+        return $this->respond(function (UserInfo $me) {
+            $pool = $this->postedPool();
+            $mode = (string) $this->request->request->get('mode');
+            $teams = $this->app->make(TeamRandomizer::class)->randomize($pool, $mode, (int) $this->request->request->get('teamSize'), $me);
+            if ($mode === TeamRandomizer::MODE_NAMES) {
+                $message = t2('%s team of %s has a new name.', '%s teams of %s have new names.', count($teams), count($teams), $pool->getName());
+            } else {
+                $message = t2('%s new team has been created in %s.', '%s new teams have been created in %s.', count($teams), count($teams), $pool->getName());
+            }
+
+            return [$message, $teams, $pool];
+        });
+    }
+
+    /**
+     * Pool and numbers for the randomize menu and its confirmation dialogs, only when filtered by a pool.
+     */
+    protected function setRandomizeData($pool): void
+    {
+        if (!$pool instanceof TeamPool) {
+            $this->set('randomizePool', null);
+
+            return;
+        }
+        $randomizer = $this->app->make(TeamRandomizer::class);
+        $teams = $this->teams()->findAll($pool);
+        $this->set('randomizePool', $pool);
+        $this->set('randomizeStats', [
+            'teams' => count($teams),
+            'players' => array_sum(array_map(function (Team $team) {
+                return $team->getMemberCount();
+            }, $teams)),
+            'singles' => count($this->poolRepository()->getSingles($pool)),
+            'sizeLimit' => $randomizer->getTeamSizeLimit($pool),
+            'defaultSize' => $randomizer->getDefaultTeamSize($pool),
+        ]);
+    }
+
+    /**
+     * Random team name for the "Add Team" form.
+     */
+    public function random_team_name()
+    {
+        return new JsonResponse(['name' => $this->app->make(TeamNameGenerator::class)->generate()]);
+    }
+
     /** @var string|null redirect target after a non-ajax action, defaults to the referring view */
     protected $redirectTo;
 
@@ -485,9 +553,9 @@ class Teams extends DashboardPageController
         return $team;
     }
 
-    protected function postedMember(Team $team): TeamMember
+    protected function postedMember(Team $team, string $field = 'user'): TeamMember
     {
-        $member = $team->getMember((int) $this->request->request->get('user'));
+        $member = $team->getMember((int) $this->request->request->get($field));
         if (!$member) {
             throw new UserMessageException(t('This user is not a member of %s.', $team->getName()));
         }
@@ -571,6 +639,8 @@ class Teams extends DashboardPageController
             'id' => $team->getID(),
             'name' => $team->getDisplayName(),
             'pool' => $team->getPool() ? $team->getPool()->getName() : null,
+            // the board shows the free places as drop targets, 0 = unlimited
+            'maxSize' => $this->app->make(TeamService::class)->getMaxTeamSize($team),
             'url' => (string) $this->app->make('url/manager')->resolve([self::PATH, 'team', $team->getID()]),
             'members' => array_map(function (TeamMember $member) {
                 return [

@@ -8,7 +8,9 @@ use TeamManager\Block\AbstractTeamBlockController;
 use TeamManager\Entity\TeamPool;
 use TeamManager\Entity\TeamRequest;
 use TeamManager\Entity\Team;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use TeamManager\Team\Pagination;
+use TeamManager\Team\TeamNameGenerator;
 use TeamManager\Team\TeamPoolRepository;
 use TeamManager\Team\TeamRepository;
 use TeamManager\Team\TeamRequestRepository;
@@ -187,6 +189,16 @@ class Controller extends AbstractTeamBlockController
 
             return t('You are no longer listed in %s.', $pool->getName());
         }, $this->getReturnQuery());
+    }
+
+    /**
+     * Random team name for the create form.
+     */
+    public function action_random_team_name($bID = null)
+    {
+        $name = $this->getCurrentUserInfo() ? $this->app->make(TeamNameGenerator::class)->generate() : '';
+
+        return new JsonResponse(['name' => $name]);
     }
 
     public function action_create_team($bID = null)
