@@ -455,6 +455,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
         'manage' => t('Manage'),
         'noSingles' => t('Nobody is looking for a team.'),
         'removeSingle' => t('Remove from pool'),
+        'requestFailed' => t('The request failed, please reload the page.'),
         'confirmRemoveSingle' => t('Remove %s from the pool?'),
     ], JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 
@@ -1166,7 +1167,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
                     notify('error', result.message);
                 }
             })
-            .catch(function () { notify('error', 'Request failed.'); })
+            .catch(function () { notify('error', i18n.requestFailed); })
             .finally(function () {
                 cols.forEach(function (col) { if (col && col.isConnected) col.querySelector('.card').classList.remove('busy'); });
             });

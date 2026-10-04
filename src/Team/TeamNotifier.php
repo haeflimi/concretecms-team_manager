@@ -3,6 +3,7 @@ namespace TeamManager\Team;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Config\Repository\Repository;
+use Concrete\Core\Localization\Localization;
 use Concrete\Core\Logging\Channels;
 use Concrete\Core\Logging\LoggerFactory;
 use Concrete\Core\User\UserInfo;
@@ -84,7 +85,14 @@ class TeamNotifier
                 $this->siteConfig->get('concrete.email.default.name')
             );
             $mail->to($recipient->getUserEmail(), $recipient->getUserName());
-            $mail->load($template, 'team_manager');
+            // the template is rendered in the recipient's language, not in the one of the current request
+            $locale = Localization::activeLocale();
+            Localization::changeLocale($recipient->getUserDefaultLanguage() ?: $this->app->make('site')->getSite()->getDefaultLocale()->getLocale());
+            try {
+                $mail->load($template, 'team_manager');
+            } finally {
+                Localization::changeLocale($locale);
+            }
             $mail->sendMail();
         } catch (Throwable $e) {
             $this->app->make(LoggerFactory::class)

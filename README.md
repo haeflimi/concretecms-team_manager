@@ -177,6 +177,25 @@ The service dispatches `TeamManager\Team\Event\TeamEvent` as:
 Pools: `TeamService::setTeamPool()`, `joinPool()`, `leavePool()`, `assignSingle()`; pool CRUD in
 `TeamManager\Team\TeamPoolService`, reading in `TeamManager\Team\TeamPoolRepository`.
 
+## Translations
+
+All user facing texts use `t()` / `t2()`, also the JavaScript texts (passed from PHP). Included: German in
+`languages/de_DE` (German spelling) and `languages/de_CH` (Swiss spelling, «» quotes), informal "du". Notification
+mails are rendered in the recipient's language (their profile language, else the site's default locale).
+
+The names of the group type, its roles and the folders ("Team Pool", "Team Player", "Free Agent", "Team Pools",
+"Team Logos") are stored when the package is installed, in the language active at that moment.
+
+To update the translations after changing texts (run as the web server user, the package's `languages` folder must
+be writable for it):
+
+```sh
+concrete/bin/concrete c5:package-translate team_manager -l de_DE -l de_CH -x
+```
+
+This updates `languages/messages.pot` and the `.po` files (existing translations are kept), translate the new
+entries in the `.po` files, then run the command again to compile the `.mo` files.
+
 ## Upgrading from 2.x
 
 In 2.x teams were core groups. 3.0 does **not** convert them: the old team tables are dropped on upgrade, the

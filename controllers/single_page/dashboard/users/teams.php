@@ -441,9 +441,9 @@ class Teams extends DashboardPageController
             $mode = (string) $this->request->request->get('mode');
             $teams = $this->app->make(TeamRandomizer::class)->randomize($pool, $mode, (int) $this->request->request->get('teamSize'), $me);
             if ($mode === TeamRandomizer::MODE_NAMES) {
-                $message = t2('%s team of %s has a new name.', '%s teams of %s have new names.', count($teams), count($teams), $pool->getName());
+                $message = t2('%s team of %s has a new name.', '%s teams of %s have new names.', count($teams), $pool->getName());
             } else {
-                $message = t2('%s new team has been created in %s.', '%s new teams have been created in %s.', count($teams), count($teams), $pool->getName());
+                $message = t2('%s new team has been created in %s.', '%s new teams have been created in %s.', count($teams), $pool->getName());
             }
 
             return [$message, $teams, $pool];
