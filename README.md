@@ -69,6 +69,9 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
 * **My Teams** – answer invitations, manage your teams (invite, approve join requests,
   promote/demote captains, remove members, edit profile, leave, disband), see the pools you're listed in as
   single player. The block has no options.
+  The package also adds the account page **My Teams** (`/account/teams`) with this block, listed in the account
+  menu next to "Edit Profile". It uses the core account controller and theme, no core or theme file is overridden.
+  The page is created on install / upgrade and removed on uninstall.
 * **Team Directory** – overview of all pools, search across the teams in pools, pool view
   (`?pool=<id>`: teams, players looking for a team, join as single player, create a team, register your team,
   invite players to your team) and team view (`?team=<id>`, "Request to join").

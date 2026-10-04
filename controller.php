@@ -22,7 +22,7 @@ class Controller extends Package implements ProviderAggregateInterface
     protected $pkgHandle = 'team_manager';
     protected $appVersionRequired = '9.4';
     protected $phpVersionRequired = '8.0';
-    protected $pkgVersion = '3.4.0';
+    protected $pkgVersion = '3.5.0';
     protected $pkgAutoloaderRegistries = [
         'src' => '\TeamManager',
     ];
@@ -164,6 +164,17 @@ class Controller extends Package implements ProviderAggregateInterface
         if (!$page || $page->isError()) {
             $page = SinglePage::add('/dashboard/users/teams', $this->getPackageEntity());
             $page->update(['cName' => t('Teams'), 'cDescription' => t('Manage teams and their members.')]);
+        }
+
+        // account page next to "Edit Profile", listed in the account menu, shows a My Teams block
+        $page = Page::getByPath('/account/teams');
+        if (!$page || $page->isError()) {
+            $page = SinglePage::add('/account/teams', $this->getPackageEntity());
+            $page->update(['cName' => t('My Teams'), 'cDescription' => t('Manage your teams and answer invitations.')]);
+        }
+        $blockType = BlockType::getByHandle('my_teams');
+        if ($blockType && !$page->getBlocks('Main')) {
+            $page->addBlock($blockType, 'Main', []);
         }
     }
 }
