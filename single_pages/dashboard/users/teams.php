@@ -59,6 +59,20 @@ $currentPath = $basePath . [
     'pool' => $mode === 'pool' ? '/pool/' . $pool->getID() : '',
 ][$mode] . ($poolFilter !== '' && in_array($mode, ['list', 'board'], true) ? '?pool=' . rawurlencode($poolFilter) : '');
 
+/**
+ * Attributes of a user input with autocomplete (js/user-search.js), $context: mode, team, pool, pool-field.
+ */
+$userSearch = function (array $context) use ($searchUsersURL) {
+    $attributes = ['data-user-search' => $searchUsersURL, 'data-user-search-empty' => t('No users found')];
+    foreach ($context as $key => $value) {
+        $attributes['data-user-search-' . $key] = $value;
+    }
+
+    return implode(' ', array_map(function ($name, $value) {
+        return $name . '="' . h($value) . '"';
+    }, array_keys($attributes), $attributes));
+};
+
 $poolsButton = '<a href="' . h($url('pools')) . '" class="btn btn-secondary"><i class="fas fa-layer-group"></i> ' . t('Pools') . '</a>';
 
 /**
@@ -154,7 +168,6 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 };
 ?>
 
-<datalist id="team-manager-users"></datalist>
 
 <?php if (in_array($mode, ['list', 'board'], true) && $randomizePool) {
     $poolName = h($randomizePool->getName());
@@ -456,6 +469,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
         'noSingles' => t('Nobody is looking for a team.'),
         'removeSingle' => t('Remove from pool'),
         'requestFailed' => t('The request failed, please reload the page.'),
+        'noUsers' => t('No users found'),
         'confirmRemoveSingle' => t('Remove %s from the pool?'),
     ], JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 
@@ -522,7 +536,8 @@ $button = function (string $task, array $fields, string $label, string $class, ?
                 <input type="hidden" name="return" value="<?= h($currentPath) ?>">
                 <input type="hidden" name="team" value="<?= $team->getID() ?>">
                 <div class="input-group">
-                    <input type="text" name="user" class="form-control team-manager-user-input" list="team-manager-users" required autocomplete="off" placeholder="<?= t('Username') ?>">
+                    <input type="text" name="user" class="form-control" required autocomplete="off" placeholder="<?= t('Username') ?>" aria-label="<?= t('Username') ?>"
+                        <?= $userSearch(['mode' => 'member', 'team' => $team->getID()]) ?>>
                     <div class="input-group-text">
                         <input type="checkbox" name="captain" value="1" class="form-check-input mt-0 me-1" id="add-as-captain">
                         <label for="add-as-captain" class="mb-0"><?= t('Captain') ?></label>
@@ -639,7 +654,8 @@ $button = function (string $task, array $fields, string $label, string $class, ?
         </div>
         <div class="mb-3">
             <?= $form->label('captain', t('Captain')) ?>
-            <input type="text" name="captain" id="captain" class="form-control team-manager-user-input" list="team-manager-users" autocomplete="off" placeholder="<?= t('Username (optional)') ?>">
+            <input type="text" name="captain" id="captain" class="form-control" autocomplete="off" placeholder="<?= t('Username (optional)') ?>"
+                <?= $userSearch(['mode' => 'captain', 'pool-field' => 'pool']) ?>>
             <div class="form-text"><?= t('Leave empty to create an empty team. The first member added becomes captain.') ?></div>
         </div>
         <div class="mb-3">
@@ -795,7 +811,8 @@ $button = function (string $task, array $fields, string $label, string $class, ?
                     <input type="hidden" name="return" value="<?= h($currentPath) ?>">
                     <input type="hidden" name="pool" value="<?= $pool->getID() ?>">
                     <div class="input-group">
-                        <input type="text" name="user" class="form-control team-manager-user-input" list="team-manager-users" required autocomplete="off" placeholder="<?= t('Username') ?>" aria-label="<?= t('Username') ?>">
+                        <input type="text" name="user" class="form-control" required autocomplete="off" placeholder="<?= t('Username') ?>" aria-label="<?= t('Username') ?>"
+                            <?= $userSearch(['mode' => 'single', 'pool' => $pool->getID()]) ?>>
                         <input type="text" name="note" class="form-control" maxlength="255" placeholder="<?= t('Note (optional)') ?>" aria-label="<?= t('Note') ?>">
                         <button type="submit" class="btn btn-secondary"><i class="fas fa-user-plus"></i> <?= t('Add player') ?></button>
                     </div>
@@ -869,33 +886,6 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 
 <script>
 (function () {
-    // username autocomplete for all inputs bound to the shared datalist
-    var searchURL = <?= json_encode($searchUsersURL) ?>;
-    var datalist = document.getElementById('team-manager-users');
-    var timer = null;
-    document.addEventListener('input', function (e) {
-        if (!e.target.matches('.team-manager-user-input')) {
-            return;
-        }
-        var q = e.target.value.trim();
-        clearTimeout(timer);
-        if (q.length < 2) {
-            return;
-        }
-        timer = setTimeout(function () {
-            fetch(searchURL + '?q=' + encodeURIComponent(q), {credentials: 'same-origin'})
-                .then(function (r) { return r.ok ? r.json() : []; })
-                .then(function (names) {
-                    datalist.innerHTML = '';
-                    names.forEach(function (name) {
-                        var option = document.createElement('option');
-                        option.value = name;
-                        datalist.appendChild(option);
-                    });
-                });
-        }, 250);
-    });
-
     // "Random" buttons fill the name input of their form with a generated team name
     document.addEventListener('click', function (e) {
         var button = e.target.closest('[data-team-name-url]');
@@ -1102,12 +1092,17 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 
         var footer = el('form', 'card-footer');
         var group = el('div', 'input-group input-group-sm');
-        var input = el('input', 'form-control team-manager-user-input');
+        var input = el('input', 'form-control');
         input.name = 'user';
         input.required = true;
         input.autocomplete = 'off';
         input.placeholder = i18n.username;
-        input.setAttribute('list', 'team-manager-users');
+        input.setAttribute('aria-label', i18n.username);
+        // user autocomplete, js/user-search.js
+        input.setAttribute('data-user-search', board.dataset.searchUrl);
+        input.setAttribute('data-user-search-mode', 'member');
+        input.setAttribute('data-user-search-team', team.id);
+        input.setAttribute('data-user-search-empty', i18n.noUsers);
         var add = el('button', 'btn btn-outline-primary');
         add.type = 'submit';
         add.title = i18n.add;

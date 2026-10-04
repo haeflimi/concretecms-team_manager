@@ -40,7 +40,7 @@ $userName = function (int $uID) use ($userInfoRepository) {
     return $ui ? $ui->getUserName() : t('Deleted user');
 };
 ?>
-<div class="team-manager team-manager-my-teams" data-search-url="<?= h($view->action('search_users')) ?>">
+<div class="team-manager team-manager-my-teams">
 
     <?php foreach ($flashMessages as $message) { ?>
         <div class="alert alert-<?= h($message['type']) ?>" role="alert">
@@ -162,7 +162,9 @@ $userName = function (int $uID) use ($userInfoRepository) {
                                     <input type="hidden" name="team" value="<?= $teamID ?>">
                                     <div class="input-group">
                                         <input type="text" name="user" class="form-control" required autocomplete="off"
-                                               list="team-manager-users-<?= $bID ?>" placeholder="<?= t('Username to invite') ?>">
+                                               placeholder="<?= t('Username to invite') ?>" aria-label="<?= t('Username to invite') ?>"
+                                               data-user-search="<?= h($view->action('search_users')) ?>" data-user-search-mode="invite"
+                                               data-user-search-team="<?= $teamID ?>" data-user-search-empty="<?= h(t('No users found')) ?>">
                                         <div class="input-group-append"><button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> <?= t('Invite') ?></button></div>
                                     </div>
                                 </form>
@@ -234,6 +236,5 @@ $userName = function (int $uID) use ($userInfoRepository) {
             <?php } ?>
         </section>
 
-        <datalist id="team-manager-users-<?= $bID ?>"></datalist>
     <?php } ?>
 </div>

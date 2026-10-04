@@ -1,0 +1,71 @@
+/* user autocomplete dropdown, see js/user-search.js */
+.tm-user-search-menu {
+    position: absolute;
+    z-index: 2000;
+    max-width: 90vw;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 4px 0;
+    background: var(--bs-body-bg, #fff);
+    color: var(--bs-body-color, #212529);
+    border: 1px solid var(--bs-border-color, rgba(0, 0, 0, .15));
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+    font-size: .9rem;
+    text-align: left;
+}
+.tm-user-search-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .35rem .75rem;
+    cursor: pointer;
+}
+.tm-user-search-item.active {
+    background: var(--bs-primary, #0d6efd);
+    color: #fff;
+}
+.tm-user-search-item.active .tm-user-search-email,
+.tm-user-search-item.active .tm-user-search-hint {
+    color: rgba(255, 255, 255, .85);
+}
+.tm-user-search-disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+.tm-user-search-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: none;
+}
+.tm-user-search-text {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+    line-height: 1.2;
+}
+.tm-user-search-name mark {
+    padding: 0;
+    background: none;
+    color: inherit;
+    font-weight: 700;
+}
+.tm-user-search-email,
+.tm-user-search-hint {
+    color: var(--bs-secondary-color, #6c757d);
+    white-space: nowrap;
+}
+.tm-user-search-suggested .tm-user-search-hint {
+    color: var(--bs-success, #198754);
+    font-weight: 600;
+}
+.tm-user-search-item.active.tm-user-search-suggested .tm-user-search-hint {
+    color: #fff;
+}
+.tm-user-search-empty {
+    padding: .35rem .75rem;
+    color: var(--bs-secondary-color, #6c757d);
+}

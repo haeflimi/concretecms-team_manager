@@ -1,7 +1,6 @@
 <?php
 namespace Concrete\Package\TeamManager\Controller\SinglePage\Dashboard\Users;
 
-use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Error\UserMessageException;
 use Concrete\Core\Page\Controller\DashboardPageController;
 use Concrete\Core\User\User;
@@ -17,6 +16,7 @@ use TeamManager\Entity\TeamMember;
 use TeamManager\Team\Pagination;
 use TeamManager\Team\TeamNameGenerator;
 use TeamManager\Team\TeamRandomizer;
+use TeamManager\Team\UserSearch;
 use TeamManager\Team\Export\TeamPoolExporter;
 use TeamManager\Team\TeamPoolMembership;
 use TeamManager\Team\TeamPoolRepository;
@@ -415,20 +415,23 @@ class Teams extends DashboardPageController
     }
 
     /**
-     * Username autocomplete.
+     * User autocomplete (js/user-search.js), with email addresses, the team / pool give each user's state.
      */
     public function search_users()
     {
-        $keywords = trim((string) $this->request->query->get('q'));
-        if (mb_strlen($keywords) < 2) {
-            return new JsonResponse([]);
+        $query = $this->request->query;
+        $mode = (string) $query->get('mode');
+        if (!in_array($mode, [UserSearch::MODE_MEMBER, UserSearch::MODE_SINGLE, UserSearch::MODE_CAPTAIN], true)) {
+            $mode = UserSearch::MODE_MEMBER;
         }
-        $names = $this->app->make(Connection::class)->fetchFirstColumn(
-            'select uName from Users where uIsActive = 1 and uName like ? order by uName limit 15',
-            ['%' . addcslashes($keywords, '%_\\') . '%']
-        );
 
-        return new JsonResponse($names);
+        return new JsonResponse($this->app->make(UserSearch::class)->search(
+            (string) $query->get('q'),
+            $mode,
+            $this->teams()->getByID((int) $query->get('team')),
+            $this->poolRepository()->getByID((int) $query->get('pool')),
+            true
+        ));
     }
 
     /**
@@ -686,6 +689,7 @@ class Teams extends DashboardPageController
 
     protected function setCommon(): void
     {
+        $this->requireAsset('team_manager/user-search');
         $this->set('token', $this->token);
         $this->set('form', $this->app->make('helper/form'));
         $this->set('tokenAction', self::TOKEN);

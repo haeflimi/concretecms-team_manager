@@ -1,7 +1,6 @@
 <?php
 namespace Concrete\Package\TeamManager\Block\MyTeams;
 
-use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Error\UserMessageException;
 use Concrete\Core\User\UserInfo;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,6 +10,7 @@ use TeamManager\Team\TeamPoolRepository;
 use TeamManager\Team\TeamRepository;
 use TeamManager\Team\TeamRequestRepository;
 use TeamManager\Team\TeamService;
+use TeamManager\Team\UserSearch;
 
 class Controller extends AbstractTeamBlockController
 {
@@ -29,6 +29,7 @@ class Controller extends AbstractTeamBlockController
     public function view()
     {
         parent::view();
+        $this->requireAsset('team_manager/user-search');
         $me = $this->getCurrentUserInfo();
         $teams = [];
         $invitations = [];
@@ -158,19 +159,24 @@ class Controller extends AbstractTeamBlockController
     }
 
     /**
-     * Username autocomplete for the invite form.
+     * User autocomplete for the invite form (js/user-search.js), without email addresses. The team gives each
+     * user's state (already a member, in another team of the pool, ...), only for teams the current user captains.
      */
     public function action_search_users($bID = null)
     {
-        $keywords = trim((string) $this->request->query->get('q'));
-        if (!$this->getCurrentUserInfo() || mb_strlen($keywords) < 2) {
+        $me = $this->getCurrentUserInfo();
+        if (!$me) {
             return new JsonResponse([]);
         }
-        $names = $this->app->make(Connection::class)->fetchFirstColumn(
-            'select uName from Users where uIsActive = 1 and uName like ? order by uName limit 10',
-            [addcslashes($keywords, '%_\\') . '%']
-        );
+        $team = $this->app->make(TeamRepository::class)->getByID((int) $this->request->query->get('team'));
+        if ($team && !$this->app->make(TeamService::class)->isCaptain($team, $me)) {
+            $team = null;
+        }
 
-        return new JsonResponse($names);
+        return new JsonResponse($this->app->make(UserSearch::class)->search(
+            (string) $this->request->query->get('q'),
+            UserSearch::MODE_INVITE,
+            $team
+        ));
     }
 }

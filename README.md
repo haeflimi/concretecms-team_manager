@@ -125,6 +125,23 @@ CSV files are UTF-8 with BOM so Excel shows umlauts. Platform notes (as of 2026-
 * **Challonge** imports names only; rosters are built by the captains through invites in Challonge.
 * **Battlefy** and **Tournify** take complete rosters from a file / paste.
 
+## User autocomplete
+
+Every input where a user is entered (dashboard: add member, captain of a new team, add player to a pool, the board
+cards; My Teams: invite) suggests users while typing (`js/user-search.js`, `css/user-search.css`, asset group
+`team_manager/user-search`, server side `TeamManager\Team\UserSearch`):
+
+* all active users, from the first character: exact match first, then names starting with the input, then names
+  containing it; admins also find users by email and see it in the list, the frontend never searches or shows emails
+* the team / pool of the input gives every user's state: users that can't be added (already in the team, in another
+  team of the pool, open invitation or join request, already looking for a team) are greyed out with the reason,
+  players looking for a team in the pool are suggested first
+* keyboard: arrow keys, Enter to take the highlighted user, Esc to close
+* My Teams only uses the team as context for teams the current user captains
+
+An input gets it with `data-user-search="<search URL>"` and optionally `data-user-search-mode` (`member`, `invite`,
+`single`, `captain`), `-team`, `-pool` or `-pool-field` (a select in the same form holding the pool ID) and `-empty`.
+
 ## Dashboard
 
 **Dashboard › Users & Groups › Teams** (`/dashboard/users/teams`), access is controlled by the page permissions.
@@ -194,7 +211,8 @@ concrete/bin/concrete c5:package-translate team_manager -l de_DE -l de_CH -x
 ```
 
 This updates `languages/messages.pot` and the `.po` files (existing translations are kept), translate the new
-entries in the `.po` files, then run the command again to compile the `.mo` files.
+entries in the `.po` files, then run the command again to compile the `.mo` files. Clear the cache afterwards,
+Concrete caches the translations.
 
 ## Upgrading from 2.x
 

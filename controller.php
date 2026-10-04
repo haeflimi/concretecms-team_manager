@@ -1,6 +1,7 @@
 <?php
 namespace Concrete\Package\TeamManager;
 
+use Concrete\Core\Asset\AssetList;
 use Concrete\Core\Backup\ContentImporter;
 use Concrete\Core\Block\BlockController;
 use Concrete\Core\Block\BlockType\BlockType;
@@ -63,6 +64,15 @@ class Controller extends Package implements ProviderAggregateInterface
                 $this->app->make(GroupListener::class)->$method($e);
             });
         }
+
+        // user autocomplete for all inputs where a user is entered, see TeamManager\Team\UserSearch
+        $assets = AssetList::getInstance();
+        $assets->register('javascript', 'team_manager/user-search', 'js/user-search.js', [], $this);
+        $assets->register('css', 'team_manager/user-search', 'css/user-search.css', [], $this);
+        $assets->registerGroup('team_manager/user-search', [
+            ['javascript', 'team_manager/user-search'],
+            ['css', 'team_manager/user-search'],
+        ]);
 
         // REST API endpoints guarded by the "team_manager:read" scope
         $this->app->make(ApiIntegration::class)->register();

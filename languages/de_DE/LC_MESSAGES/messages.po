@@ -7,40 +7,40 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-04T00:58:49+00:00\n"
-"PO-Revision-Date: 2026-10-04T00:58:49+00:00\n"
+"POT-Creation-Date: 2026-10-04T01:11:19+00:00\n"
+"PO-Revision-Date: 2026-10-04T01:11:19+00:00\n"
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: packages/team_manager/controller.php:33
+#: packages/team_manager/controller.php:34
 msgid "Team Manager"
 msgstr "Team Manager"
 
-#: packages/team_manager/controller.php:38
+#: packages/team_manager/controller.php:39
 msgid "Teams with captains, invitations and join requests, organized in team pools (core groups usable for permissions)."
 msgstr "Teams mit Captains, Einladungen und Beitrittsanfragen, organisiert in Team-Pools (Benutzergruppen, die für Berechtigungen nutzbar sind)."
 
-#: packages/team_manager/controller.php:172
+#: packages/team_manager/controller.php:182
 #: packages/team_manager/blocks/team_directory/view.php:246
 #: packages/team_manager/blocks/team_directory/view.php:329
 #: packages/team_manager/blocks/team_directory/view.php:339
-#: packages/team_manager/single_pages/dashboard/users/teams.php:266
-#: packages/team_manager/single_pages/dashboard/users/teams.php:673
-#: packages/team_manager/single_pages/dashboard/users/teams.php:693
+#: packages/team_manager/single_pages/dashboard/users/teams.php:279
+#: packages/team_manager/single_pages/dashboard/users/teams.php:689
+#: packages/team_manager/single_pages/dashboard/users/teams.php:709
 msgid "Teams"
 msgstr "Teams"
 
-#: packages/team_manager/controller.php:172
+#: packages/team_manager/controller.php:182
 msgid "Manage teams and their members."
 msgstr "Teams und ihre Mitglieder verwalten."
 
-#: packages/team_manager/controller.php:179
+#: packages/team_manager/controller.php:189
 #: packages/team_manager/blocks/my_teams/controller.php:21
 #: packages/team_manager/blocks/my_teams/view.php:93
 msgid "My Teams"
 msgstr "Meine Teams"
 
-#: packages/team_manager/controller.php:179
+#: packages/team_manager/controller.php:189
 msgid "Manage your teams and answer invitations."
 msgstr "Verwalte deine Teams und beantworte Einladungen."
 
@@ -48,60 +48,60 @@ msgstr "Verwalte deine Teams und beantworte Einladungen."
 msgid "Lets users manage their teams, invite members and answer invitations."
 msgstr "Lässt Benutzer ihre Teams verwalten, Mitglieder einladen und Einladungen beantworten."
 
-#: packages/team_manager/blocks/my_teams/controller.php:80
+#: packages/team_manager/blocks/my_teams/controller.php:81
 msgid "Team %s has been updated."
 msgstr "Team %s wurde aktualisiert."
 
-#: packages/team_manager/blocks/my_teams/controller.php:91
+#: packages/team_manager/blocks/my_teams/controller.php:92
 #: packages/team_manager/blocks/team_directory/controller.php:250
 msgid "%s has been invited to %s."
 msgstr "%s wurde zu %s eingeladen."
 
-#: packages/team_manager/blocks/my_teams/controller.php:101
+#: packages/team_manager/blocks/my_teams/controller.php:102
 msgid "Request accepted."
 msgstr "Anfrage angenommen."
 
-#: packages/team_manager/blocks/my_teams/controller.php:101
+#: packages/team_manager/blocks/my_teams/controller.php:102
 msgid "Request declined."
 msgstr "Anfrage abgelehnt."
 
-#: packages/team_manager/blocks/my_teams/controller.php:110
+#: packages/team_manager/blocks/my_teams/controller.php:111
 msgid "The request has been withdrawn."
 msgstr "Die Anfrage wurde zurückgezogen."
 
-#: packages/team_manager/blocks/my_teams/controller.php:120
+#: packages/team_manager/blocks/my_teams/controller.php:121
 msgid "The member is now a captain."
 msgstr "Das Mitglied ist jetzt Captain."
 
-#: packages/team_manager/blocks/my_teams/controller.php:120
+#: packages/team_manager/blocks/my_teams/controller.php:121
 msgid "The captain is now a regular member."
 msgstr "Der Captain ist jetzt ein normales Mitglied."
 
-#: packages/team_manager/blocks/my_teams/controller.php:132
+#: packages/team_manager/blocks/my_teams/controller.php:133
 msgid "You have left %s."
 msgstr "Du hast %s verlassen."
 
-#: packages/team_manager/blocks/my_teams/controller.php:133
+#: packages/team_manager/blocks/my_teams/controller.php:134
 msgid "The member has been removed from %s."
 msgstr "Das Mitglied wurde aus %s entfernt."
 
-#: packages/team_manager/blocks/my_teams/controller.php:143
+#: packages/team_manager/blocks/my_teams/controller.php:144
 msgid "Team %s has been disbanded."
 msgstr "Team %s wurde aufgelöst."
 
-#: packages/team_manager/blocks/my_teams/controller.php:152
+#: packages/team_manager/blocks/my_teams/controller.php:153
 msgid "You are not listed in this pool anymore."
 msgstr "Du bist in diesem Pool nicht mehr eingetragen."
 
-#: packages/team_manager/blocks/my_teams/controller.php:156
+#: packages/team_manager/blocks/my_teams/controller.php:157
 #: packages/team_manager/blocks/team_directory/controller.php:190
 msgid "You are no longer listed in %s."
 msgstr "Du bist nicht mehr in %s eingetragen."
 
 #: packages/team_manager/blocks/my_teams/view.php:40
 #: packages/team_manager/controllers/single_page/dashboard/users/teams.php:76
-#: packages/team_manager/single_pages/dashboard/users/teams.php:547
-#: packages/team_manager/single_pages/dashboard/users/teams.php:765
+#: packages/team_manager/single_pages/dashboard/users/teams.php:562
+#: packages/team_manager/single_pages/dashboard/users/teams.php:781
 #: packages/team_manager/src/Entity/TeamMember.php:102
 msgid "Deleted user"
 msgstr "Gelöschter Benutzer"
@@ -129,8 +129,9 @@ msgstr "Ablehnen"
 #: packages/team_manager/blocks/my_teams/view.php:77
 #: packages/team_manager/blocks/team_directory/view.php:263
 #: packages/team_manager/blocks/team_directory/view.php:330
-#: packages/team_manager/single_pages/dashboard/users/teams.php:290
-#: packages/team_manager/single_pages/dashboard/users/teams.php:674
+#: packages/team_manager/single_pages/dashboard/users/teams.php:303
+#: packages/team_manager/single_pages/dashboard/users/teams.php:690
+#: packages/team_manager/src/Team/UserSearch.php:131
 msgid "Looking for a team"
 msgstr "Sucht ein Team"
 
@@ -150,28 +151,28 @@ msgstr "Du bist noch in keinem Team."
 #: packages/team_manager/blocks/my_teams/view.php:115
 #: packages/team_manager/blocks/my_teams/view.php:139
 #: packages/team_manager/blocks/team_directory/view.php:154
-#: packages/team_manager/single_pages/dashboard/users/teams.php:446
-#: packages/team_manager/single_pages/dashboard/users/teams.php:485
-#: packages/team_manager/single_pages/dashboard/users/teams.php:528
-#: packages/team_manager/single_pages/dashboard/users/teams.php:641
+#: packages/team_manager/single_pages/dashboard/users/teams.php:459
+#: packages/team_manager/single_pages/dashboard/users/teams.php:499
+#: packages/team_manager/single_pages/dashboard/users/teams.php:543
+#: packages/team_manager/single_pages/dashboard/users/teams.php:656
 msgid "Captain"
 msgstr "Captain"
 
 #: packages/team_manager/blocks/my_teams/view.php:117
 #: packages/team_manager/blocks/my_teams/view.php:124
 #: packages/team_manager/blocks/team_directory/view.php:111
-#: packages/team_manager/single_pages/dashboard/users/teams.php:313
+#: packages/team_manager/single_pages/dashboard/users/teams.php:326
 msgid "Members"
 msgstr "Mitglieder"
 
 #: packages/team_manager/blocks/my_teams/view.php:145
-#: packages/team_manager/single_pages/dashboard/users/teams.php:493
+#: packages/team_manager/single_pages/dashboard/users/teams.php:507
 msgid "Make member"
 msgstr "Zum Mitglied machen"
 
 #: packages/team_manager/blocks/my_teams/view.php:147
-#: packages/team_manager/single_pages/dashboard/users/teams.php:447
-#: packages/team_manager/single_pages/dashboard/users/teams.php:495
+#: packages/team_manager/single_pages/dashboard/users/teams.php:460
+#: packages/team_manager/single_pages/dashboard/users/teams.php:509
 msgid "Make captain"
 msgstr "Zum Captain machen"
 
@@ -191,78 +192,84 @@ msgstr "Willst du %s wirklich verlassen?"
 msgid "Username to invite"
 msgstr "Benutzername zum Einladen"
 
-#: packages/team_manager/blocks/my_teams/view.php:166
+#: packages/team_manager/blocks/my_teams/view.php:167
+#: packages/team_manager/single_pages/dashboard/users/teams.php:66
+#: packages/team_manager/single_pages/dashboard/users/teams.php:472
+msgid "No users found"
+msgstr "Keine Benutzer gefunden"
+
+#: packages/team_manager/blocks/my_teams/view.php:168
 #: packages/team_manager/blocks/team_directory/view.php:297
 msgid "Invite"
 msgstr "Einladen"
 
-#: packages/team_manager/blocks/my_teams/view.php:171
+#: packages/team_manager/blocks/my_teams/view.php:173
 msgid "Join requests"
 msgstr "Beitrittsanfragen"
 
-#: packages/team_manager/blocks/my_teams/view.php:177
+#: packages/team_manager/blocks/my_teams/view.php:179
 msgid "Approve"
 msgstr "Annehmen"
 
-#: packages/team_manager/blocks/my_teams/view.php:178
+#: packages/team_manager/blocks/my_teams/view.php:180
 msgid "Deny"
 msgstr "Ablehnen"
 
-#: packages/team_manager/blocks/my_teams/view.php:186
+#: packages/team_manager/blocks/my_teams/view.php:188
 msgid "Pending invitations"
 msgstr "Offene Einladungen"
 
-#: packages/team_manager/blocks/my_teams/view.php:191
+#: packages/team_manager/blocks/my_teams/view.php:193
 msgid "Withdraw"
 msgstr "Zurückziehen"
 
-#: packages/team_manager/blocks/my_teams/view.php:198
+#: packages/team_manager/blocks/my_teams/view.php:200
 msgid "Edit team"
 msgstr "Team bearbeiten"
 
-#: packages/team_manager/blocks/my_teams/view.php:204
-#: packages/team_manager/single_pages/dashboard/users/teams.php:585
-#: packages/team_manager/single_pages/dashboard/users/teams.php:624
-#: packages/team_manager/single_pages/dashboard/users/teams.php:813
+#: packages/team_manager/blocks/my_teams/view.php:206
+#: packages/team_manager/single_pages/dashboard/users/teams.php:600
+#: packages/team_manager/single_pages/dashboard/users/teams.php:639
+#: packages/team_manager/single_pages/dashboard/users/teams.php:830
 msgid "Name"
 msgstr "Name"
 
-#: packages/team_manager/blocks/my_teams/view.php:208
+#: packages/team_manager/blocks/my_teams/view.php:210
 #: packages/team_manager/blocks/team_directory/view.php:218
-#: packages/team_manager/single_pages/dashboard/users/teams.php:589
-#: packages/team_manager/single_pages/dashboard/users/teams.php:633
+#: packages/team_manager/single_pages/dashboard/users/teams.php:604
+#: packages/team_manager/single_pages/dashboard/users/teams.php:648
 msgid "Tag"
 msgstr "Kürzel"
 
-#: packages/team_manager/blocks/my_teams/view.php:213
+#: packages/team_manager/blocks/my_teams/view.php:215
 #: packages/team_manager/blocks/team_directory/view.php:222
-#: packages/team_manager/single_pages/dashboard/users/teams.php:593
-#: packages/team_manager/single_pages/dashboard/users/teams.php:637
-#: packages/team_manager/single_pages/dashboard/users/teams.php:817
+#: packages/team_manager/single_pages/dashboard/users/teams.php:608
+#: packages/team_manager/single_pages/dashboard/users/teams.php:652
+#: packages/team_manager/single_pages/dashboard/users/teams.php:834
 msgid "Description"
 msgstr "Beschreibung"
 
-#: packages/team_manager/blocks/my_teams/view.php:217
-#: packages/team_manager/single_pages/dashboard/users/teams.php:597
+#: packages/team_manager/blocks/my_teams/view.php:219
+#: packages/team_manager/single_pages/dashboard/users/teams.php:612
 msgid "Logo"
 msgstr "Logo"
 
-#: packages/team_manager/blocks/my_teams/view.php:222
-#: packages/team_manager/single_pages/dashboard/users/teams.php:605
+#: packages/team_manager/blocks/my_teams/view.php:224
+#: packages/team_manager/single_pages/dashboard/users/teams.php:620
 msgid "Remove current logo"
 msgstr "Aktuelles Logo entfernen"
 
-#: packages/team_manager/blocks/my_teams/view.php:226
-#: packages/team_manager/single_pages/dashboard/users/teams.php:609
-#: packages/team_manager/single_pages/dashboard/users/teams.php:849
+#: packages/team_manager/blocks/my_teams/view.php:228
+#: packages/team_manager/single_pages/dashboard/users/teams.php:624
+#: packages/team_manager/single_pages/dashboard/users/teams.php:866
 msgid "Save"
 msgstr "Speichern"
 
-#: packages/team_manager/blocks/my_teams/view.php:230
+#: packages/team_manager/blocks/my_teams/view.php:232
 msgid "Disband team"
 msgstr "Team auflösen"
 
-#: packages/team_manager/blocks/my_teams/view.php:230
+#: packages/team_manager/blocks/my_teams/view.php:232
 msgid "Disband %s? This removes the team for all members."
 msgstr "%s auflösen? Das Team wird für alle Mitglieder entfernt."
 
@@ -315,8 +322,8 @@ msgstr "Beitreten ist hier nicht möglich."
 
 #: packages/team_manager/blocks/team_directory/controller.php:293
 #: packages/team_manager/controllers/single_page/dashboard/users/teams.php:302
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:460
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:627
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:463
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:630
 msgid "The pool does not exist."
 msgstr "Der Pool existiert nicht."
 
@@ -355,19 +362,19 @@ msgid "Optional. A page with the My Teams block, linked so users can manage thei
 msgstr "Optional. Eine Seite mit dem Block „Meine Teams“, verlinkt, damit Benutzer ihre Teams verwalten können."
 
 #: packages/team_manager/blocks/team_directory/view.php:61
-#: packages/team_manager/single_pages/dashboard/users/teams.php:690
+#: packages/team_manager/single_pages/dashboard/users/teams.php:706
 msgid "Closed"
 msgstr "Geschlossen"
 
 #: packages/team_manager/blocks/team_directory/view.php:64
-#: packages/team_manager/single_pages/dashboard/users/teams.php:692
+#: packages/team_manager/single_pages/dashboard/users/teams.php:708
 msgid "Open"
 msgstr "Offen"
 
 #: packages/team_manager/blocks/team_directory/view.php:76
-#: packages/team_manager/single_pages/dashboard/users/teams.php:335
-#: packages/team_manager/single_pages/dashboard/users/teams.php:455
-#: packages/team_manager/single_pages/dashboard/users/teams.php:700
+#: packages/team_manager/single_pages/dashboard/users/teams.php:348
+#: packages/team_manager/single_pages/dashboard/users/teams.php:468
+#: packages/team_manager/single_pages/dashboard/users/teams.php:716
 msgid "Manage"
 msgstr "Verwalten"
 
@@ -388,12 +395,12 @@ msgid "Request to join"
 msgstr "Beitritt anfragen"
 
 #: packages/team_manager/blocks/team_directory/view.php:128
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:695
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:699
 msgid "All teams"
 msgstr "Alle Teams"
 
 #: packages/team_manager/blocks/team_directory/view.php:141
-#: packages/team_manager/single_pages/dashboard/users/teams.php:474
+#: packages/team_manager/single_pages/dashboard/users/teams.php:488
 msgid "Members (%s)"
 msgstr "Mitglieder (%s)"
 
@@ -418,12 +425,12 @@ msgid "Team name"
 msgstr "Teamname"
 
 #: packages/team_manager/blocks/team_directory/view.php:211
-#: packages/team_manager/single_pages/dashboard/users/teams.php:627
+#: packages/team_manager/single_pages/dashboard/users/teams.php:642
 msgid "Random name"
 msgstr "Zufälliger Name"
 
 #: packages/team_manager/blocks/team_directory/view.php:212
-#: packages/team_manager/single_pages/dashboard/users/teams.php:628
+#: packages/team_manager/single_pages/dashboard/users/teams.php:643
 msgid "Random"
 msgstr "Zufall"
 
@@ -436,15 +443,15 @@ msgid "Description (optional)"
 msgstr "Beschreibung (optional)"
 
 #: packages/team_manager/blocks/team_directory/view.php:224
-#: packages/team_manager/single_pages/dashboard/users/teams.php:652
+#: packages/team_manager/single_pages/dashboard/users/teams.php:668
 msgid "Create Team"
 msgstr "Team erstellen"
 
 #: packages/team_manager/blocks/team_directory/view.php:233
 #: packages/team_manager/blocks/team_directory/view.php:292
-#: packages/team_manager/single_pages/dashboard/users/teams.php:310
-#: packages/team_manager/single_pages/dashboard/users/teams.php:379
-#: packages/team_manager/single_pages/dashboard/users/teams.php:777
+#: packages/team_manager/single_pages/dashboard/users/teams.php:323
+#: packages/team_manager/single_pages/dashboard/users/teams.php:392
+#: packages/team_manager/single_pages/dashboard/users/teams.php:793
 msgid "Team"
 msgstr "Team"
 
@@ -457,7 +464,7 @@ msgid "%s of %s"
 msgstr "%s von %s"
 
 #: packages/team_manager/blocks/team_directory/view.php:249
-#: packages/team_manager/single_pages/dashboard/users/teams.php:724
+#: packages/team_manager/single_pages/dashboard/users/teams.php:740
 msgid "max. %s members per team"
 msgstr "max. %s Mitglieder pro Team"
 
@@ -493,7 +500,7 @@ msgid "Search teams"
 msgstr "Teams suchen"
 
 #: packages/team_manager/blocks/team_directory/view.php:350
-#: packages/team_manager/single_pages/dashboard/users/teams.php:305
+#: packages/team_manager/single_pages/dashboard/users/teams.php:318
 msgid "No teams match your search."
 msgstr "Keine Teams gefunden."
 
@@ -502,7 +509,7 @@ msgid "Manage your teams"
 msgstr "Deine Teams verwalten"
 
 #: packages/team_manager/controllers/single_page/dashboard/users/teams.php:114
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:571
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:574
 #: packages/team_manager/src/Block/AbstractTeamBlockController.php:94
 msgid "The team does not exist."
 msgstr "Das Team existiert nicht."
@@ -517,9 +524,9 @@ msgid "No pool"
 msgstr "Kein Pool"
 
 #: packages/team_manager/controllers/single_page/dashboard/users/teams.php:141
-#: packages/team_manager/single_pages/dashboard/users/teams.php:260
-#: packages/team_manager/single_pages/dashboard/users/teams.php:404
-#: packages/team_manager/single_pages/dashboard/users/teams.php:717
+#: packages/team_manager/single_pages/dashboard/users/teams.php:273
+#: packages/team_manager/single_pages/dashboard/users/teams.php:417
+#: packages/team_manager/single_pages/dashboard/users/teams.php:733
 msgid "Add Team"
 msgstr "Team hinzufügen"
 
@@ -570,7 +577,7 @@ msgid "Team %s has been deleted."
 msgstr "Team %s wurde gelöscht."
 
 #: packages/team_manager/controllers/single_page/dashboard/users/teams.php:293
-#: packages/team_manager/single_pages/dashboard/users/teams.php:661
+#: packages/team_manager/single_pages/dashboard/users/teams.php:677
 msgid "Add Pool"
 msgstr "Pool hinzufügen"
 
@@ -610,39 +617,39 @@ msgstr "Der Spieler wurde aus %s entfernt."
 msgid "The members of the group %s have been updated."
 msgstr "Die Mitglieder der Gruppe %s wurden aktualisiert."
 
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:444
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:447
 msgid "%s team of %s has a new name."
 msgid_plural "%s teams of %s have new names."
 msgstr[0] "%s Team von %s hat einen neuen Namen."
 msgstr[1] "%s Teams von %s haben neue Namen."
 
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:446
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:449
 msgid "%s new team has been created in %s."
 msgid_plural "%s new teams have been created in %s."
 msgstr[0] "%s neues Team wurde in %s erstellt."
 msgstr[1] "%s neue Teams wurden in %s erstellt."
 
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:518
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:521
 #: packages/team_manager/src/Block/AbstractTeamBlockController.php:57
 msgid "Invalid request method."
 msgstr "Ungültige Anfragemethode."
 
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:581
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:584
 #: packages/team_manager/src/Team/TeamService.php:265
 #: packages/team_manager/src/Team/TeamService.php:291
 msgid "This user is not a member of %s."
 msgstr "Dieser Benutzer ist kein Mitglied von %s."
 
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:592
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:595
 #: packages/team_manager/src/Block/AbstractTeamBlockController.php:115
 msgid "User \"%s\" not found."
 msgstr "Benutzer „%s“ nicht gefunden."
 
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:637
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:640
 msgid "This player is not listed in the pool anymore."
 msgstr "Dieser Spieler ist nicht mehr im Pool eingetragen."
 
-#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:695
+#: packages/team_manager/controllers/single_page/dashboard/users/teams.php:699
 msgid "Teams without pool"
 msgstr "Teams ohne Pool"
 
@@ -728,444 +735,444 @@ msgstr ""
 "%s\n"
 ""
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:62
-#: packages/team_manager/single_pages/dashboard/users/teams.php:284
+#: packages/team_manager/single_pages/dashboard/users/teams.php:76
+#: packages/team_manager/single_pages/dashboard/users/teams.php:297
 msgid "Pools"
 msgstr "Pools"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:69
+#: packages/team_manager/single_pages/dashboard/users/teams.php:83
 msgid "View"
 msgstr "Ansicht"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:70
+#: packages/team_manager/single_pages/dashboard/users/teams.php:84
 msgid "List"
 msgstr "Liste"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:70
-#: packages/team_manager/single_pages/dashboard/users/teams.php:469
-#: packages/team_manager/single_pages/dashboard/users/teams.php:699
-#: packages/team_manager/single_pages/dashboard/users/teams.php:716
+#: packages/team_manager/single_pages/dashboard/users/teams.php:84
+#: packages/team_manager/single_pages/dashboard/users/teams.php:483
+#: packages/team_manager/single_pages/dashboard/users/teams.php:715
+#: packages/team_manager/single_pages/dashboard/users/teams.php:732
 msgid "Board"
 msgstr "Board"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:89
+#: packages/team_manager/single_pages/dashboard/users/teams.php:103
 msgid "Select a pool to randomize its teams"
 msgstr "Wähle einen Pool, um seine Teams zufällig zu verteilen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:91
-#: packages/team_manager/single_pages/dashboard/users/teams.php:99
-#: packages/team_manager/single_pages/dashboard/users/teams.php:214
+#: packages/team_manager/single_pages/dashboard/users/teams.php:105
+#: packages/team_manager/single_pages/dashboard/users/teams.php:113
+#: packages/team_manager/single_pages/dashboard/users/teams.php:227
 msgid "Randomize"
 msgstr "Zufallsverteilung"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:94
+#: packages/team_manager/single_pages/dashboard/users/teams.php:108
 msgid "Complete randomize"
 msgstr "Alles zufällig verteilen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:95
+#: packages/team_manager/single_pages/dashboard/users/teams.php:109
 msgid "Randomize unteamed players"
 msgstr "Teamlose Spieler zufällig verteilen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:96
+#: packages/team_manager/single_pages/dashboard/users/teams.php:110
 msgid "Randomize names only"
 msgstr "Nur Namen zufällig vergeben"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:112
+#: packages/team_manager/single_pages/dashboard/users/teams.php:126
 msgid "Select a pool to export its teams"
 msgstr "Wähle einen Pool, um seine Teams zu exportieren"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:114
-#: packages/team_manager/single_pages/dashboard/users/teams.php:117
+#: packages/team_manager/single_pages/dashboard/users/teams.php:128
+#: packages/team_manager/single_pages/dashboard/users/teams.php:131
 msgid "Export"
 msgstr "Exportieren"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:131
-#: packages/team_manager/single_pages/dashboard/users/teams.php:311
-#: packages/team_manager/single_pages/dashboard/users/teams.php:352
-#: packages/team_manager/single_pages/dashboard/users/teams.php:567
-#: packages/team_manager/single_pages/dashboard/users/teams.php:646
-#: packages/team_manager/single_pages/dashboard/users/teams.php:672
+#: packages/team_manager/single_pages/dashboard/users/teams.php:145
+#: packages/team_manager/single_pages/dashboard/users/teams.php:324
+#: packages/team_manager/single_pages/dashboard/users/teams.php:365
+#: packages/team_manager/single_pages/dashboard/users/teams.php:582
+#: packages/team_manager/single_pages/dashboard/users/teams.php:662
+#: packages/team_manager/single_pages/dashboard/users/teams.php:688
 msgid "Pool"
 msgstr "Pool"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:164
+#: packages/team_manager/single_pages/dashboard/users/teams.php:177
 msgid "Completely randomize %s"
 msgstr "%s komplett zufällig verteilen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:165
+#: packages/team_manager/single_pages/dashboard/users/teams.php:178
 msgid "All %1$s teams of %2$s are deleted, with their names, tags, descriptions, logos, open invitations and join requests. All %3$s players of %2$s (%4$s in teams, %5$s looking for a team) are shuffled into new teams with random names. The first player of each new team becomes captain."
 msgstr "Alle %1$s Teams von %2$s werden gelöscht, mit ihren Namen, Kürzeln, Beschreibungen, Logos, offenen Einladungen und Beitrittsanfragen. Alle %3$s Spieler von %2$s (%4$s in Teams, %5$s teamsuchend) werden zufällig auf neue Teams mit Zufallsnamen verteilt. Der erste Spieler jedes neuen Teams wird Captain."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:170
+#: packages/team_manager/single_pages/dashboard/users/teams.php:183
 msgid "Randomize the unteamed players of %s"
 msgstr "Teamlose Spieler von %s zufällig verteilen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:171
+#: packages/team_manager/single_pages/dashboard/users/teams.php:184
 msgid "The %1$s players looking for a team in %2$s are shuffled into new teams with random names. The first player of each new team becomes captain. The existing teams stay as they are."
 msgstr "Die %1$s teamsuchenden Spieler in %2$s werden zufällig auf neue Teams mit Zufallsnamen verteilt. Der erste Spieler jedes neuen Teams wird Captain. Die bestehenden Teams bleiben, wie sie sind."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:176
+#: packages/team_manager/single_pages/dashboard/users/teams.php:189
 msgid "Randomize the team names of %s"
 msgstr "Teamnamen von %s zufällig vergeben"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:177
+#: packages/team_manager/single_pages/dashboard/users/teams.php:190
 msgid "All %1$s teams of %2$s get new random names. Members, captains, tags, descriptions and logos stay as they are."
 msgstr "Alle %1$s Teams von %2$s erhalten neue Zufallsnamen. Mitglieder, Captains, Kürzel, Beschreibungen und Logos bleiben, wie sie sind."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:192
+#: packages/team_manager/single_pages/dashboard/users/teams.php:205
 msgid "Close"
 msgstr "Schließen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:198
+#: packages/team_manager/single_pages/dashboard/users/teams.php:211
 msgid "Players per team"
 msgstr "Spieler pro Team"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:203
+#: packages/team_manager/single_pages/dashboard/users/teams.php:216
 msgid "Max. %s, the max. team size of the pool."
 msgstr "Max. %s, die maximale Teamgröße des Pools."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:209
+#: packages/team_manager/single_pages/dashboard/users/teams.php:222
 msgid "This cannot be undone."
 msgstr "Dies kann nicht rückgängig gemacht werden."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:213
-#: packages/team_manager/single_pages/dashboard/users/teams.php:557
-#: packages/team_manager/single_pages/dashboard/users/teams.php:651
+#: packages/team_manager/single_pages/dashboard/users/teams.php:226
+#: packages/team_manager/single_pages/dashboard/users/teams.php:572
+#: packages/team_manager/single_pages/dashboard/users/teams.php:667
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:224
+#: packages/team_manager/single_pages/dashboard/users/teams.php:237
 msgid "Makes %1$s teams of %2$s players."
 msgstr "Ergibt %1$s Teams mit %2$s Spielern."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:225
+#: packages/team_manager/single_pages/dashboard/users/teams.php:238
 msgid "Makes %1$s teams of %2$s to %3$s players."
 msgstr "Ergibt %1$s Teams mit %2$s bis %3$s Spielern."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:272
+#: packages/team_manager/single_pages/dashboard/users/teams.php:285
 msgid "Users in teams"
 msgstr "Benutzer in Teams"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:278
+#: packages/team_manager/single_pages/dashboard/users/teams.php:291
 msgid "Empty teams"
 msgstr "Leere Teams"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:299
+#: packages/team_manager/single_pages/dashboard/users/teams.php:312
 msgid "Search teams and players"
 msgstr "Teams und Spieler suchen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:305
-#: packages/team_manager/single_pages/dashboard/users/teams.php:440
+#: packages/team_manager/single_pages/dashboard/users/teams.php:318
+#: packages/team_manager/single_pages/dashboard/users/teams.php:453
 msgid "There are no teams yet."
 msgstr "Es gibt noch keine Teams."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:312
+#: packages/team_manager/single_pages/dashboard/users/teams.php:325
 msgid "Captains"
 msgstr "Captains"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:314
+#: packages/team_manager/single_pages/dashboard/users/teams.php:327
 msgid "Created"
 msgstr "Erstellt"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:331
+#: packages/team_manager/single_pages/dashboard/users/teams.php:344
 msgid "No captain"
 msgstr "Kein Captain"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:344
-#: packages/team_manager/single_pages/dashboard/users/teams.php:754
+#: packages/team_manager/single_pages/dashboard/users/teams.php:357
+#: packages/team_manager/single_pages/dashboard/users/teams.php:770
 msgid "Looking for a team (%s)"
 msgstr "Sucht ein Team (%s)"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:346
+#: packages/team_manager/single_pages/dashboard/users/teams.php:359
 msgid "No players match your search."
 msgstr "Keine Spieler gefunden."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:346
-#: packages/team_manager/single_pages/dashboard/users/teams.php:456
+#: packages/team_manager/single_pages/dashboard/users/teams.php:359
+#: packages/team_manager/single_pages/dashboard/users/teams.php:469
 msgid "Nobody is looking for a team."
 msgstr "Niemand sucht ein Team."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:351
+#: packages/team_manager/single_pages/dashboard/users/teams.php:364
 msgid "Player"
 msgstr "Spieler"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:353
+#: packages/team_manager/single_pages/dashboard/users/teams.php:366
 msgid "Since"
 msgstr "Seit"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:380
-#: packages/team_manager/single_pages/dashboard/users/teams.php:778
+#: packages/team_manager/single_pages/dashboard/users/teams.php:393
+#: packages/team_manager/single_pages/dashboard/users/teams.php:794
 msgid "Add to team…"
 msgstr "Zu Team hinzufügen …"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:385
-#: packages/team_manager/single_pages/dashboard/users/teams.php:555
-#: packages/team_manager/single_pages/dashboard/users/teams.php:783
+#: packages/team_manager/single_pages/dashboard/users/teams.php:398
+#: packages/team_manager/single_pages/dashboard/users/teams.php:570
+#: packages/team_manager/single_pages/dashboard/users/teams.php:799
 msgid "Add to team"
 msgstr "Zu Team hinzufügen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:388
-#: packages/team_manager/single_pages/dashboard/users/teams.php:450
-#: packages/team_manager/single_pages/dashboard/users/teams.php:512
+#: packages/team_manager/single_pages/dashboard/users/teams.php:401
+#: packages/team_manager/single_pages/dashboard/users/teams.php:463
+#: packages/team_manager/single_pages/dashboard/users/teams.php:526
 msgid "Remove %s from %s?"
 msgstr "%s aus %s entfernen?"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:409
+#: packages/team_manager/single_pages/dashboard/users/teams.php:422
 msgid "Filter teams and members"
 msgstr "Teams und Mitglieder filtern"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:412
+#: packages/team_manager/single_pages/dashboard/users/teams.php:425
 msgid "Captains stay captains when moved"
 msgstr "Captains bleiben beim Verschieben Captain"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:415
+#: packages/team_manager/single_pages/dashboard/users/teams.php:428
 msgid "Drag members onto another team to move them, drag players looking for a team onto a team to add them."
 msgstr "Ziehe Mitglieder auf ein anderes Team, um sie zu verschieben, und teamsuchende Spieler auf ein Team, um sie hinzuzufügen."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:415
+#: packages/team_manager/single_pages/dashboard/users/teams.php:428
 msgid "Drag members onto another team to move them."
 msgstr "Ziehe Mitglieder auf ein anderes Team, um sie zu verschieben."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:422
+#: packages/team_manager/single_pages/dashboard/users/teams.php:435
 msgid "Looking for a team in %s"
 msgstr "Sucht ein Team in %s"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:423
+#: packages/team_manager/single_pages/dashboard/users/teams.php:436
 msgid "Manage pool"
 msgstr "Pool verwalten"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:448
+#: packages/team_manager/single_pages/dashboard/users/teams.php:461
 msgid "Make regular member"
 msgstr "Zum normalen Mitglied machen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:449
+#: packages/team_manager/single_pages/dashboard/users/teams.php:462
 msgid "Remove from team"
 msgstr "Aus dem Team entfernen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:451
+#: packages/team_manager/single_pages/dashboard/users/teams.php:464
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:452
-#: packages/team_manager/single_pages/dashboard/users/teams.php:525
-#: packages/team_manager/single_pages/dashboard/users/teams.php:798
+#: packages/team_manager/single_pages/dashboard/users/teams.php:465
+#: packages/team_manager/single_pages/dashboard/users/teams.php:539
+#: packages/team_manager/single_pages/dashboard/users/teams.php:814
 msgid "Username"
 msgstr "Benutzername"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:453
+#: packages/team_manager/single_pages/dashboard/users/teams.php:466
 msgid "Empty slot"
 msgstr "Freier Platz"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:454
+#: packages/team_manager/single_pages/dashboard/users/teams.php:467
 msgid "Drop a player here"
 msgstr "Spieler hier ablegen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:457
-#: packages/team_manager/single_pages/dashboard/users/teams.php:735
+#: packages/team_manager/single_pages/dashboard/users/teams.php:470
+#: packages/team_manager/single_pages/dashboard/users/teams.php:751
 msgid "Remove from pool"
 msgstr "Aus dem Pool entfernen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:458
+#: packages/team_manager/single_pages/dashboard/users/teams.php:471
 msgid "The request failed, please reload the page."
 msgstr "Die Anfrage ist fehlgeschlagen, bitte lade die Seite neu."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:459
-#: packages/team_manager/single_pages/dashboard/users/teams.php:786
+#: packages/team_manager/single_pages/dashboard/users/teams.php:473
+#: packages/team_manager/single_pages/dashboard/users/teams.php:802
 msgid "Remove %s from the pool?"
 msgstr "%s aus dem Pool entfernen?"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:468
-#: packages/team_manager/single_pages/dashboard/users/teams.php:660
+#: packages/team_manager/single_pages/dashboard/users/teams.php:482
+#: packages/team_manager/single_pages/dashboard/users/teams.php:676
 msgid "All Teams"
 msgstr "Alle Teams"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:476
+#: packages/team_manager/single_pages/dashboard/users/teams.php:490
 msgid "This team has no members."
 msgstr "Dieses Team hat keine Mitglieder."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:488
+#: packages/team_manager/single_pages/dashboard/users/teams.php:502
 msgid "Joined %s"
 msgstr "Beigetreten %s"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:503
+#: packages/team_manager/single_pages/dashboard/users/teams.php:517
 msgid "Move to team"
 msgstr "In Team verschieben"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:504
+#: packages/team_manager/single_pages/dashboard/users/teams.php:518
 msgid "Move to…"
 msgstr "Verschieben nach …"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:509
+#: packages/team_manager/single_pages/dashboard/users/teams.php:523
 msgid "Move"
 msgstr "Verschieben"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:530
+#: packages/team_manager/single_pages/dashboard/users/teams.php:545
 msgid "Add member"
 msgstr "Mitglied hinzufügen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:534
+#: packages/team_manager/single_pages/dashboard/users/teams.php:549
 msgid "Open join requests"
 msgstr "Offene Beitrittsanfragen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:534
+#: packages/team_manager/single_pages/dashboard/users/teams.php:549
 msgid "Open invitations"
 msgstr "Offene Einladungen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:549
+#: packages/team_manager/single_pages/dashboard/users/teams.php:564
 msgid "invited by %s"
 msgstr "eingeladen von %s"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:574
+#: packages/team_manager/single_pages/dashboard/users/teams.php:589
 msgid "Change pool"
 msgstr "Pool ändern"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:576
+#: packages/team_manager/single_pages/dashboard/users/teams.php:591
 msgid "Members can only be in one team per pool, the change is rejected otherwise."
 msgstr "Mitglieder können nur in einem Team pro Pool sein, sonst wird die Änderung abgelehnt."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:579
+#: packages/team_manager/single_pages/dashboard/users/teams.php:594
 msgid "Profile"
 msgstr "Profil"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:612
-#: packages/team_manager/single_pages/dashboard/users/teams.php:614
+#: packages/team_manager/single_pages/dashboard/users/teams.php:627
+#: packages/team_manager/single_pages/dashboard/users/teams.php:629
 msgid "Delete team"
 msgstr "Team löschen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:613
+#: packages/team_manager/single_pages/dashboard/users/teams.php:628
 msgid "Removes the team and all memberships. This cannot be undone."
 msgstr "Entfernt das Team und alle Mitgliedschaften. Dies kann nicht rückgängig gemacht werden."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:614
+#: packages/team_manager/single_pages/dashboard/users/teams.php:629
 msgid "Delete %s for all %s members?"
 msgstr "%s für alle %s Mitglieder löschen?"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:642
+#: packages/team_manager/single_pages/dashboard/users/teams.php:657
 msgid "Username (optional)"
 msgstr "Benutzername (optional)"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:643
+#: packages/team_manager/single_pages/dashboard/users/teams.php:659
 msgid "Leave empty to create an empty team. The first member added becomes captain."
 msgstr "Leer lassen, um ein leeres Team zu erstellen. Das erste hinzugefügte Mitglied wird Captain."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:664
+#: packages/team_manager/single_pages/dashboard/users/teams.php:680
 msgid "A pool holds teams and single players looking for a team. Users can only be in one team per pool. Each pool is a group of the type \"Team Pool\" whose members are all its participants, so it can be used for permissions."
 msgstr "Ein Pool enthält Teams und Einzelspieler, die ein Team suchen. Benutzer können nur in einem Team pro Pool sein. Jeder Pool ist eine Gruppe vom Typ „Team-Pool“, deren Mitglieder alle Teilnehmer sind, und kann so für Berechtigungen genutzt werden."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:667
+#: packages/team_manager/single_pages/dashboard/users/teams.php:683
 msgid "There are no pools yet."
 msgstr "Es gibt noch keine Pools."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:675
+#: packages/team_manager/single_pages/dashboard/users/teams.php:691
 msgid "Joining"
 msgstr "Beitritt"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:694
+#: packages/team_manager/single_pages/dashboard/users/teams.php:710
 msgid "Team creation"
 msgstr "Team-Erstellung"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:695
+#: packages/team_manager/single_pages/dashboard/users/teams.php:711
 msgid "Single players"
 msgstr "Einzelspieler"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:724
+#: packages/team_manager/single_pages/dashboard/users/teams.php:740
 msgid "Teams (%s)"
 msgstr "Teams (%s)"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:724
+#: packages/team_manager/single_pages/dashboard/users/teams.php:740
 msgid "max. %s"
 msgstr "max. %s"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:726
+#: packages/team_manager/single_pages/dashboard/users/teams.php:742
 msgid "No teams in this pool yet."
 msgstr "Noch keine Teams in diesem Pool."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:749
+#: packages/team_manager/single_pages/dashboard/users/teams.php:765
 msgid "Add team to pool"
 msgstr "Team zum Pool hinzufügen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:756
+#: packages/team_manager/single_pages/dashboard/users/teams.php:772
 msgid "Nobody is looking for a team in this pool."
 msgstr "In diesem Pool sucht niemand ein Team."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:799
+#: packages/team_manager/single_pages/dashboard/users/teams.php:816
 msgid "Note (optional)"
 msgstr "Notiz (optional)"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:799
+#: packages/team_manager/single_pages/dashboard/users/teams.php:816
 msgid "Note"
 msgstr "Notiz"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:800
+#: packages/team_manager/single_pages/dashboard/users/teams.php:817
 msgid "Add player"
 msgstr "Spieler hinzufügen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:807
+#: packages/team_manager/single_pages/dashboard/users/teams.php:824
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:823
+#: packages/team_manager/single_pages/dashboard/users/teams.php:840
 msgid "Open for joining"
 msgstr "Offen für Beitritte"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:827
+#: packages/team_manager/single_pages/dashboard/users/teams.php:844
 msgid "Captains can register their teams"
 msgstr "Captains können ihre Teams anmelden"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:831
+#: packages/team_manager/single_pages/dashboard/users/teams.php:848
 msgid "Users can create new teams in this pool"
 msgstr "Benutzer können in diesem Pool neue Teams erstellen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:835
+#: packages/team_manager/single_pages/dashboard/users/teams.php:852
 msgid "Users can join as single player looking for a team"
 msgstr "Benutzer können sich als teamsuchende Einzelspieler eintragen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:837
+#: packages/team_manager/single_pages/dashboard/users/teams.php:854
 msgid "These settings apply to users. Admins can always add teams and players here."
 msgstr "Diese Einstellungen gelten für Benutzer. Admins können hier jederzeit Teams und Spieler hinzufügen."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:840
+#: packages/team_manager/single_pages/dashboard/users/teams.php:857
 msgid "Maximum number of teams"
 msgstr "Maximale Anzahl Teams"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:842
+#: packages/team_manager/single_pages/dashboard/users/teams.php:859
 msgid "0 = unlimited"
 msgstr "0 = unbegrenzt"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:845
+#: packages/team_manager/single_pages/dashboard/users/teams.php:862
 msgid "Maximum team size"
 msgstr "Maximale Teamgröße"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:847
+#: packages/team_manager/single_pages/dashboard/users/teams.php:864
 msgid "Members per team, applies to admins too. 0 = the global setting applies."
 msgstr "Mitglieder pro Team, gilt auch für Admins. 0 = die globale Einstellung gilt."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:849
+#: packages/team_manager/single_pages/dashboard/users/teams.php:866
 msgid "Create Pool"
 msgstr "Pool erstellen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:853
+#: packages/team_manager/single_pages/dashboard/users/teams.php:870
 msgid "Core group"
 msgstr "Benutzergruppe"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:855
+#: packages/team_manager/single_pages/dashboard/users/teams.php:872
 msgid "The pool is the group %s. Team players get the role \"Team Player\", free agents the role \"Free Agent\". You can use the group for permissions, e.g. to show a page to the pool's participants only. Memberships are managed here, changes made in Dashboard › Groups are overwritten on the next change or resync."
 msgstr "Der Pool ist die Gruppe %s. Teamspieler erhalten die Rolle „Teamspieler“, Free Agents die Rolle „Free Agent“. Du kannst die Gruppe für Berechtigungen nutzen, z. B. um eine Seite nur den Teilnehmern des Pools zu zeigen. Mitgliedschaften werden hier verwaltet, Änderungen unter Dashboard › Gruppen werden bei der nächsten Änderung oder Synchronisierung überschrieben."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:858
+#: packages/team_manager/single_pages/dashboard/users/teams.php:875
 msgid "Resync group members"
 msgstr "Gruppenmitglieder synchronisieren"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:861
-#: packages/team_manager/single_pages/dashboard/users/teams.php:863
+#: packages/team_manager/single_pages/dashboard/users/teams.php:878
+#: packages/team_manager/single_pages/dashboard/users/teams.php:880
 msgid "Delete pool"
 msgstr "Pool löschen"
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:862
+#: packages/team_manager/single_pages/dashboard/users/teams.php:879
 msgid "Deletes the pool group. The teams are kept and have no pool afterwards, the list of players looking for a team is deleted."
 msgstr "Löscht die Pool-Gruppe. Die Teams bleiben erhalten und haben danach keinen Pool mehr, die Liste der teamsuchenden Spieler wird gelöscht."
 
-#: packages/team_manager/single_pages/dashboard/users/teams.php:863
+#: packages/team_manager/single_pages/dashboard/users/teams.php:880
 msgid "Delete the pool %s?"
 msgstr "Den Pool %s löschen?"
 
@@ -1368,6 +1375,22 @@ msgstr "Das Logo muss ein JPG-, PNG-, GIF- oder WEBP-Bild sein."
 #: packages/team_manager/src/Team/TeamService.php:723
 msgid "The logo could not be uploaded: %s"
 msgstr "Das Logo konnte nicht hochgeladen werden: %s"
+
+#: packages/team_manager/src/Team/UserSearch.php:117
+msgid "Already in this team"
+msgstr "Bereits in diesem Team"
+
+#: packages/team_manager/src/Team/UserSearch.php:122
+msgid "In team %s"
+msgstr "Im Team %s"
+
+#: packages/team_manager/src/Team/UserSearch.php:126
+msgid "Invitation or join request open"
+msgstr "Einladung oder Beitrittsanfrage offen"
+
+#: packages/team_manager/src/Team/UserSearch.php:130
+msgid "Already looking for a team"
+msgstr "Sucht bereits ein Team"
 
 #: packages/team_manager/src/Block/AbstractTeamBlockController.php:64
 msgid "You must be logged in."
