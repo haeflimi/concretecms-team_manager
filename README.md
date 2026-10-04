@@ -105,6 +105,26 @@ scope on install / upgrade (removed on uninstall) and adds the scope, the endpoi
 schemas to the OpenAPI spec. That keeps the scope alive when Concrete synchronizes its scopes (it deletes scopes
 missing from the spec) and lists the endpoints in the API documentation.
 
+## Export for tournament platforms
+
+Dashboard › Teams › **Export** (list / board filtered by a pool, and the pool page) downloads a pool's teams in seed
+order (by name). The files contain member emails, they're only available on the dashboard
+(`TeamManager\Team\Export\TeamPoolExporter`, one class per format in `src/Team/Export/Format`).
+
+| Format | Content | Use it for |
+|---|---|---|
+| Team names (.txt) | one team name per line (commas removed) | Challonge "Bulk Add" (paste), start.gg, bracket generators |
+| Team names with captain email (.txt) | `Team name, captain email` | Challonge "Bulk Add", invites the captains by email |
+| Battlefy CSV | `teamName,player,email`, one row per member, captains first | Battlefy team import (players without account get a verification email) |
+| Roster CSV | `team_id,team_name,tag,seed,player_id,username,email,captain,free_agent,date_joined`, free agents at the end | Tournify (paste from Excel), spreadsheets, other platforms |
+
+CSV files are UTF-8 with BOM so Excel shows umlauts. Platform notes (as of 2026-10):
+
+* **Toornament** has no file import, participants with lineups can only be created through its API v2
+  (paid Arena plan or API plan). Team names max. 40 characters.
+* **Challonge** imports names only; rosters are built by the captains through invites in Challonge.
+* **Battlefy** and **Tournify** take complete rosters from a file / paste.
+
 ## Dashboard
 
 **Dashboard › Users & Groups › Teams** (`/dashboard/users/teams`), access is controlled by the page permissions.

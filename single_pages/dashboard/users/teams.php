@@ -28,6 +28,7 @@ use Concrete\Core\Support\Facade\Url;
  * @var Team[][] $singlePoolTeams teams by pool ID, to add single players to
  * @var TeamPool|null $randomizePool list / board filtered by this pool, enables the randomize menu
  * @var array $randomizeStats teams, players (in teams), singles, sizeLimit (0 = none), defaultSize
+ * @var \TeamManager\Team\Export\TeamPoolExportFormat[] $exportFormats
  * team / add:
  * @var array $poolOptions
  * @var int $selectedPoolID
@@ -98,6 +99,25 @@ $randomizeMenu = function () use ($randomizePool, $randomizeStats) {
         . '<i class="fas fa-random"></i> ' . t('Randomize') . '</button><ul class="dropdown-menu dropdown-menu-end">';
     foreach ($items as $mode => [$label, $enabled]) {
         $html .= '<li><button type="button" class="dropdown-item"' . ($enabled ? ' data-bs-toggle="modal" data-bs-target="#team-randomize-' . $mode . '"' : ' disabled') . '>' . $label . '</button></li>';
+    }
+
+    return $html . '</ul></div>';
+};
+
+/**
+ * "Export" menu: downloads of the pool's teams for tournament platforms, disabled without pool.
+ */
+$exportMenu = function (?\TeamManager\Entity\TeamPool $exportPool) use ($url, $exportFormats) {
+    if (!$exportPool) {
+        return '<span class="d-inline-block" tabindex="0" title="' . h(t('Select a pool to export its teams')) . '">'
+            . '<button type="button" class="btn btn-secondary dropdown-toggle" disabled style="pointer-events: none;">'
+            . '<i class="fas fa-file-export"></i> ' . t('Export') . '</button></span>';
+    }
+    $html = '<div class="btn-group"><button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">'
+        . '<i class="fas fa-file-export"></i> ' . t('Export') . '</button><ul class="dropdown-menu dropdown-menu-end">';
+    foreach ($exportFormats as $format) {
+        $html .= '<li><a class="dropdown-item" href="' . h($url('export_pool', $exportPool->getID(), $format->getHandle())) . '">'
+            . h($format->getLabel()) . '<div class="small text-muted">' . h($format->getDescription()) . '</div></a></li>';
     }
 
     return $html . '</ul></div>';
@@ -234,6 +254,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 
     <div class="ccm-dashboard-header-buttons">
         <?= $poolsButton ?>
+        <?= $exportMenu($randomizePool) ?>
         <?= $randomizeMenu() ?>
         <?= $viewSwitch() ?>
         <a href="<?= h($url('add')) ?>" class="btn btn-primary"><i class="fas fa-plus"></i> <?= t('Add Team') ?></a>
@@ -377,6 +398,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
 
     <div class="ccm-dashboard-header-buttons">
         <?= $poolsButton ?>
+        <?= $exportMenu($randomizePool) ?>
         <?= $randomizeMenu() ?>
         <?= $viewSwitch() ?>
         <a href="<?= h($url('add') . ($boardPool ? '?pool=' . $boardPool->getID() : '')) ?>" class="btn btn-primary"><i class="fas fa-plus"></i> <?= t('Add Team') ?></a>
@@ -689,6 +711,7 @@ $button = function (string $task, array $fields, string $label, string $class, ?
     <div class="ccm-dashboard-header-buttons">
         <?= $poolsButton ?>
         <?php if (!$isNew) { ?>
+            <?= $exportMenu($pool) ?>
             <a href="<?= h($url('board') . '?pool=' . $pool->getID()) ?>" class="btn btn-secondary"><i class="fas fa-columns"></i> <?= t('Board') ?></a>
             <a href="<?= h($url('add') . '?pool=' . $pool->getID()) ?>" class="btn btn-primary"><i class="fas fa-plus"></i> <?= t('Add Team') ?></a>
         <?php } ?>

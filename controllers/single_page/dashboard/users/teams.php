@@ -17,6 +17,7 @@ use TeamManager\Entity\TeamMember;
 use TeamManager\Team\Pagination;
 use TeamManager\Team\TeamNameGenerator;
 use TeamManager\Team\TeamRandomizer;
+use TeamManager\Team\Export\TeamPoolExporter;
 use TeamManager\Team\TeamPoolMembership;
 use TeamManager\Team\TeamPoolRepository;
 use TeamManager\Team\TeamPoolService;
@@ -450,6 +451,26 @@ class Teams extends DashboardPageController
     }
 
     /**
+     * Downloads the pool's teams in a format for tournament platforms, see TeamPoolExporter.
+     */
+    public function export_pool($poolID = null, $format = null)
+    {
+        $pool = $this->poolRepository()->getByID((int) $poolID);
+        if (!$pool) {
+            $this->flash('error', t('The pool does not exist.'));
+
+            return $this->buildRedirect(self::PATH);
+        }
+        try {
+            return $this->app->make(TeamPoolExporter::class)->download($pool, (string) $format);
+        } catch (UserMessageException $e) {
+            $this->flash('error', $e->getMessage());
+
+            return $this->buildRedirect(self::PATH . '/pool/' . $pool->getID());
+        }
+    }
+
+    /**
      * Pool and numbers for the randomize menu and its confirmation dialogs, only when filtered by a pool.
      */
     protected function setRandomizeData($pool): void
@@ -669,6 +690,7 @@ class Teams extends DashboardPageController
         $this->set('form', $this->app->make('helper/form'));
         $this->set('tokenAction', self::TOKEN);
         $this->set('basePath', self::PATH);
+        $this->set('exportFormats', $this->app->make(TeamPoolExporter::class)->getFormats());
         $this->set('searchUsersURL', (string) $this->app->make('url/manager')->resolve([self::PATH, 'search_users']));
         $filterOptions = ['' => t('All teams'), 'none' => t('Teams without pool')];
         foreach ($this->poolRepository()->getAll() as $pool) {
