@@ -80,6 +80,31 @@ A pool holds teams and/or single users that want to join a team. Pools can only 
   directory doesn't list them and they can't be joined there.
   Options: limit joining to one pool, and optionally only show that pool.
 
+## REST API
+
+Two read-only endpoints are added to the Concrete REST API (`/ccm/api/1.0`) when the API is enabled
+(Dashboard › System & Settings › API). Both need the scope **`team_manager:read`** ("Read team pools, teams and
+their members"); grant it to an integration in Dashboard › System & Settings › API › Integrations. It works with
+client credentials and authorization code tokens.
+
+| Endpoint | Returns |
+|---|---|
+| `GET /ccm/api/1.0/team_pools` | all pools: id, name, description, `team_count`, `player_count`, `free_agent_count`, `settings` (`open`, `allow_teams`, `allow_team_creation`, `allow_free_agents`, `max_teams`, `max_team_size`), `date_created` |
+| `GET /ccm/api/1.0/team_pools/{poolID}/teams` | the pool's teams: id, name, tag, description, `logo_url`, `pool_id`, `member_count`, `members` (`user_id`, `username`, `captain`, `date_joined`), `date_created`; 404 if the pool doesn't exist |
+
+Responses are wrapped in `{"data": [...]}` like the core endpoints. `max_team_size` is the pool's limit or the
+global `max_team_size`, 0 = unlimited.
+
+```sh
+curl -d "grant_type=client_credentials&client_id=…&client_secret=…&scope=team_manager:read" https://example.com/oauth/2.0/token
+curl -H "Authorization: Bearer <access_token>" https://example.com/ccm/api/1.0/team_pools
+```
+
+Implementation: `TeamManager\Api\ApiIntegration` registers `routes/api.php` with the core API middleware, stores the
+scope on install / upgrade (removed on uninstall) and adds the scope, the endpoints and the `TeamPool` / `Team`
+schemas to the OpenAPI spec. That keeps the scope alive when Concrete synchronizes its scopes (it deletes scopes
+missing from the spec) and lists the endpoints in the API documentation.
+
 ## Dashboard
 
 **Dashboard › Users & Groups › Teams** (`/dashboard/users/teams`), access is controlled by the page permissions.

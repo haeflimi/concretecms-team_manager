@@ -10,6 +10,7 @@ use Concrete\Core\Database\EntityManager\Provider\StandardPackageProvider;
 use Concrete\Core\Package\Package;
 use Concrete\Core\Page\Page;
 use Concrete\Core\Page\Single as SinglePage;
+use TeamManager\Api\ApiIntegration;
 use TeamManager\Install\TeamInstaller;
 use TeamManager\Listener\GroupListener;
 use TeamManager\Team\TeamConfig;
@@ -22,7 +23,7 @@ class Controller extends Package implements ProviderAggregateInterface
     protected $pkgHandle = 'team_manager';
     protected $appVersionRequired = '9.4';
     protected $phpVersionRequired = '8.0';
-    protected $pkgVersion = '3.5.0';
+    protected $pkgVersion = '3.6.0';
     protected $pkgAutoloaderRegistries = [
         'src' => '\TeamManager',
     ];
@@ -62,6 +63,9 @@ class Controller extends Package implements ProviderAggregateInterface
                 $this->app->make(GroupListener::class)->$method($e);
             });
         }
+
+        // REST API endpoints guarded by the "team_manager:read" scope
+        $this->app->make(ApiIntegration::class)->register();
     }
 
     public function install()
@@ -142,12 +146,14 @@ class Controller extends Package implements ProviderAggregateInterface
     public function uninstall()
     {
         $this->app->make(TeamInstaller::class)->uninstall();
+        $this->app->make(ApiIntegration::class)->uninstallScope();
         parent::uninstall();
     }
 
     private function installContent()
     {
         $this->app->make(TeamInstaller::class)->install();
+        $this->app->make(ApiIntegration::class)->installScope();
 
         $ci = new ContentImporter();
         $ci->importContentFile($this->getPackagePath() . '/install.xml');
