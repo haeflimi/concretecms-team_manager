@@ -1424,3 +1424,6 @@ msgstr "Team-Pool nicht gefunden."
 #: packages/team_manager/src/Api/ApiIntegration.php:35
 msgid "Read team pools, teams and their members"
 msgstr "Team-Pools, Teams und ihre Mitglieder lesen"
+
+msgid "Team members"
+msgstr "Team-Mitglieder"

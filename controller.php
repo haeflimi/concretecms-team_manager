@@ -24,7 +24,7 @@ class Controller extends Package implements ProviderAggregateInterface
     protected $pkgHandle = 'team_manager';
     protected $appVersionRequired = '9.4';
     protected $phpVersionRequired = '8.0';
-    protected $pkgVersion = '3.6.0';
+    protected $pkgVersion = '3.7.0';
     protected $pkgAutoloaderRegistries = [
         'src' => '\TeamManager',
     ];
@@ -48,6 +48,10 @@ class Controller extends Package implements ProviderAggregateInterface
 
     public function on_start()
     {
+        // figures for the block "Event Figure" (community_event_manager): only asked for when that package is installed
+        $this->app->make('director')->addListener('on_event_figures_register', static function ($event) {
+            \TeamManager\Figure\TeamFigures::register($event->getSubject());
+        });
         // shared instances within a request
         foreach ([TeamConfig::class, TeamRepository::class, TeamPoolRepository::class, TeamRequestRepository::class] as $class) {
             $this->app->singleton($class);
