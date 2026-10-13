@@ -20,3 +20,10 @@
 .team-manager summary.card-header::-webkit-details-marker {
     display: none;
 }
+.team-manager .team-manager-avatar {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    border-radius: 4px;
+    vertical-align: middle;
+}

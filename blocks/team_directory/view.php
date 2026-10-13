@@ -3,6 +3,7 @@ defined('C5_EXECUTE') or die('Access Denied.');
 
 use TeamManager\Entity\TeamPool;
 use TeamManager\Entity\Team;
+use TeamManager\Team\UserAvatar;
 
 /**
  * @var \Concrete\Core\Block\View\BlockView $view
@@ -144,7 +145,7 @@ $teamItem = function (Team $item, bool $showPool) use ($logoURL, $pageURL, $join
                 $profileURL = ($member->getUserInfo() ? $member->getUserInfo()->getUserPublicProfileURL() : null);
                 ?>
                 <li class="list-group-item">
-                    <i class="fa fa-user"></i>
+                    <?= UserAvatar::html($member->getUserInfo()) ?>
                     <?php if ($profileURL) { ?>
                         <a href="<?= h($profileURL) ?>"><?= h($member->getUserName()) ?></a>
                     <?php } else { ?>
@@ -274,7 +275,7 @@ $teamItem = function (Team $item, bool $showPool) use ($logoURL, $pageURL, $join
                         ?>
                         <li class="list-group-item d-flex align-items-center flex-wrap tm-gap">
                             <span class="flex-grow-1">
-                                <i class="fa fa-user"></i>
+                                <?= UserAvatar::html($ui) ?>
                                 <?php if ($profileURL) { ?>
                                     <a href="<?= h($profileURL) ?>"><?= h($ui->getUserName()) ?></a>
                                 <?php } else { ?>

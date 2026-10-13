@@ -1,6 +1,8 @@
 <?php
 defined('C5_EXECUTE') or die('Access Denied.');
 
+use TeamManager\Team\UserAvatar;
+
 /**
  * @var \Concrete\Core\Block\View\BlockView $view
  * @var \Concrete\Core\Validation\CSRF\Token $token
@@ -129,7 +131,7 @@ $userName = function (int $uID) use ($userInfoRepository) {
                                     ?>
                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap tm-gap">
                                         <span>
-                                            <i class="fa fa-user"></i>
+                                            <?= UserAvatar::html($member->getUserInfo()) ?>
                                             <?php if ($profileURL) { ?>
                                                 <a href="<?= h($profileURL) ?>"><?= h($member->getUserName()) ?></a>
                                             <?php } else { ?>
@@ -174,7 +176,7 @@ $userName = function (int $uID) use ($userInfoRepository) {
                                     <ul class="list-group mb-3">
                                         <?php foreach ($openJoinRequests[$teamID] as $request) { ?>
                                             <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap tm-gap">
-                                                <span><?= h($userName($request->getUserID())) ?> <small class="text-muted"><?= $dh->formatDate($request->getCreatedAt()) ?></small></span>
+                                                <span><?= UserAvatar::html($userInfoRepository->getByID($request->getUserID())) ?> <?= h($userName($request->getUserID())) ?> <small class="text-muted"><?= $dh->formatDate($request->getCreatedAt()) ?></small></span>
                                                 <span>
                                                     <?php $button('respond_request', 'team_respond', ['request' => $request->getID(), 'accept' => 1], t('Approve'), 'btn-success') ?>
                                                     <?php $button('respond_request', 'team_respond', ['request' => $request->getID(), 'accept' => 0], t('Deny'), 'btn-outline-secondary') ?>
@@ -189,7 +191,7 @@ $userName = function (int $uID) use ($userInfoRepository) {
                                     <ul class="list-group mb-3">
                                         <?php foreach ($openInvites[$teamID] as $request) { ?>
                                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <span><?= h($userName($request->getUserID())) ?> <small class="text-muted"><?= $dh->formatDate($request->getCreatedAt()) ?></small></span>
+                                                <span><?= UserAvatar::html($userInfoRepository->getByID($request->getUserID())) ?> <?= h($userName($request->getUserID())) ?> <small class="text-muted"><?= $dh->formatDate($request->getCreatedAt()) ?></small></span>
                                                 <?php $button('cancel_request', 'team_cancel', ['request' => $request->getID()], t('Withdraw'), 'btn-outline-secondary') ?>
                                             </li>
                                         <?php } ?>
