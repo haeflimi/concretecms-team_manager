@@ -29,6 +29,8 @@ class Controller extends AbstractTeamBlockController
     public $joinPoolID;
     /** @var int only show the pool selected in joinPoolID */
     public $onlyListJoinPool;
+    /** @var array{0: int, 1: int}|null joinPoolID and onlyListJoinPool as saved, before on_start() took the page's pool */
+    protected $configured;
 
     public function getBlockTypeName()
     {
@@ -51,6 +53,14 @@ class Controller extends AbstractTeamBlockController
 
     public function edit()
     {
+        // the form shows what is saved in the block, not the pool taken from the page
+        if ($this->configured !== null) {
+            [$joinPoolID, $onlyListJoinPool] = $this->configured;
+            $this->joinPoolID = $joinPoolID;
+            $this->onlyListJoinPool = $onlyListJoinPool;
+            $this->set('joinPoolID', $joinPoolID);
+            $this->set('onlyListJoinPool', $onlyListJoinPool);
+        }
         $this->setPoolOptions();
     }
 
@@ -63,6 +73,23 @@ class Controller extends AbstractTeamBlockController
             'joinPoolID' => $joinPoolID,
             'onlyListJoinPool' => $joinPoolID && !empty($args['onlyListJoinPool']) ? 1 : 0,
         ]);
+    }
+
+    /**
+     * No pool chosen in the block, but the page has one (attribute "team_pool", e.g. a tournament page): the block
+     * shows and joins that pool only.
+     */
+    public function on_start()
+    {
+        $this->configured = [(int) $this->joinPoolID, (int) $this->onlyListJoinPool];
+        if (!(int) $this->joinPoolID) {
+            $page = \Concrete\Core\Page\Page::getCurrentPage();
+            $pool = $page && !$page->isError() ? $this->app->make(\TeamManager\Team\TeamPoolPages::class)->poolOfPage($page) : null;
+            if ($pool !== null) {
+                $this->joinPoolID = $pool->getID();
+                $this->onlyListJoinPool = 1;
+            }
+        }
     }
 
     public function view()

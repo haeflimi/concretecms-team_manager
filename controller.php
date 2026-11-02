@@ -2,6 +2,8 @@
 namespace Concrete\Package\TeamManager;
 
 use Concrete\Core\Asset\AssetList;
+use Concrete\Core\Attribute\Category\CategoryService;
+use Concrete\Core\Attribute\TypeFactory;
 use Concrete\Core\Backup\ContentImporter;
 use Concrete\Core\Block\BlockController;
 use Concrete\Core\Block\BlockType\BlockType;
@@ -11,10 +13,12 @@ use Concrete\Core\Database\EntityManager\Provider\StandardPackageProvider;
 use Concrete\Core\Package\Package;
 use Concrete\Core\Page\Page;
 use Concrete\Core\Page\Single as SinglePage;
+use Concrete\Core\Routing\Router;
 use TeamManager\Api\ApiIntegration;
 use TeamManager\Install\TeamInstaller;
 use TeamManager\Listener\GroupListener;
 use TeamManager\Team\TeamConfig;
+use TeamManager\Team\TeamPoolPages;
 use TeamManager\Team\TeamPoolRepository;
 use TeamManager\Team\TeamRepository;
 use TeamManager\Team\TeamRequestRepository;
@@ -24,7 +28,7 @@ class Controller extends Package implements ProviderAggregateInterface
     protected $pkgHandle = 'team_manager';
     protected $appVersionRequired = '9.4';
     protected $phpVersionRequired = '8.0';
-    protected $pkgVersion = '3.7.0';
+    protected $pkgVersion = '3.8.0';
     protected $pkgAutoloaderRegistries = [
         'src' => '\TeamManager',
     ];
@@ -80,6 +84,11 @@ class Controller extends Package implements ProviderAggregateInterface
 
         // REST API endpoints guarded by the "team_manager:read" scope
         $this->app->make(ApiIntegration::class)->register();
+
+        // one-click free agent sign-up for pool cards outside the Team Directory (theme tournament cards)
+        $router = $this->app->make(Router::class);
+        $router->post('/ccm/team_manager/pool/{gID}/join', 'TeamManager\Controller\PoolApi::join');
+        $router->post('/ccm/team_manager/pool/{gID}/leave', 'TeamManager\Controller\PoolApi::leave');
     }
 
     public function install()
@@ -107,6 +116,8 @@ class Controller extends Package implements ProviderAggregateInterface
         parent::upgrade();
         $this->moveMyTeamsSettingsToPools();
         $this->installContent();
+        // 3.8: pages whose Team Directory is limited to one pool (tournament pages) get it as page attribute
+        $this->app->make(TeamPoolPages::class)->fillFromDirectories();
     }
 
     /**
@@ -164,9 +175,28 @@ class Controller extends Package implements ProviderAggregateInterface
         parent::uninstall();
     }
 
+    /**
+     * Page attribute "Team pool" (type team_pool): links a page, e.g. a tournament page, to its pool.
+     */
+    private function installPoolAttribute()
+    {
+        $pkg = $this->getPackageEntity();
+        $category = $this->app->make(CategoryService::class)->getByHandle('collection');
+        $types = $this->app->make(TypeFactory::class);
+        $type = $types->getByHandle(TeamPoolPages::ATTRIBUTE) ?: $types->add(TeamPoolPages::ATTRIBUTE, 'Team pool', $pkg);
+        if (!$category->getAttributeTypes()->contains($type)) {
+            $category->associateAttributeKeyType($type);
+        }
+        $controller = $category->getController();
+        if (!$controller->getAttributeKeyByHandleUncached(TeamPoolPages::ATTRIBUTE)) {
+            $controller->add(TeamPoolPages::ATTRIBUTE, ['akHandle' => TeamPoolPages::ATTRIBUTE, 'akName' => t('Team pool'), 'akIsSearchable' => true], null, $pkg);
+        }
+    }
+
     private function installContent()
     {
         $this->app->make(TeamInstaller::class)->install();
+        $this->installPoolAttribute();
         $this->app->make(ApiIntegration::class)->installScope();
 
         $ci = new ContentImporter();

@@ -194,6 +194,18 @@ The service dispatches `TeamManager\Team\Event\TeamEvent` as:
 Pools: `TeamService::setTeamPool()`, `joinPool()`, `leavePool()`, `assignSingle()`; pool CRUD in
 `TeamManager\Team\TeamPoolService`, reading in `TeamManager\Team\TeamPoolRepository`.
 
+## Pages and pools
+
+Page attribute **Team pool** (`team_pool`, own attribute type): links a page — typically a tournament page — to its
+pool. `TeamManager\Team\TeamPoolPages::poolOfPage($page)` reads it (fallback: the pool the page's Team Directory is
+limited to) and `status($pool, $user)` returns what a card shows (open, solo/teams, counts, full, `mine`).
+A Team Directory without a chosen pool uses the page's pool. Upgrading to 3.8 sets the attribute on all pages whose
+Team Directory is limited to one pool.
+
+One-click free agent sign-up for such cards (theme_blackout's page list template "Tournament cards" uses it):
+`POST /ccm/team_manager/pool/{gID}/join` and `/leave` with `ccm_token` (`team_pool_join` / `team_pool_leave`), signed-in
+users only; answers the pool's `status()` or `{error}` (the rules of `TeamService::joinPool()` / `leavePool()`).
+
 ## Translations
 
 All user facing texts use `t()` / `t2()`, also the JavaScript texts (passed from PHP). Included: German in

@@ -1427,3 +1427,18 @@ msgstr "Team-Pools, Teams und ihre Mitglieder lesen"
 
 msgid "Team members"
 msgstr "Team-Mitglieder"
+
+msgid "Team pool"
+msgstr "Team-Pool"
+
+msgid "Please sign in first."
+msgstr "Bitte melde dich zuerst an."
+
+msgid "The form has expired, please reload the page."
+msgstr "Das Formular ist abgelaufen, bitte lade die Seite neu."
+
+msgid "This team pool does not exist (any more)."
+msgstr "Diesen Team-Pool gibt es nicht (mehr)."
+
+msgid "You are not looking for a team in %s."
+msgstr "Du suchst in %s kein Team."
